@@ -80,13 +80,14 @@ class Kucoin:
         )
 
     def raw_query(
-        self, method: str, url: str, parameters: dict = {}
+        self, method: str, url: str, data: dict = {}, parameters: dict = {}
     ) -> requests.Response:
         """Sending a raw request to the endpoint based on the method name and URL path
 
         Args:
             method (str): the method name : 'GET', 'POST' ...
             url (str): the path of endpoint : 'api/v1/accounts' ...
+            data (dict, optional): sending some pyload beside the URL with Post, Put methods . Defaults to {}.
             parameters (dict, optional): sending some parameters beside the URL . Defaults to {}.
 
         Returns:
@@ -95,9 +96,14 @@ class Kucoin:
         self.generate_signature(method, url)
 
         full_url = urljoin(self.base_url, url)
-        print(full_url)
         headers = self.generate_header()
-        reqeust = requests.request(method, full_url, headers=headers, params=parameters)
+        reqeust = requests.request(
+            method,
+            full_url,
+            headers=headers,
+            data=data,
+            params=parameters,
+        )
         return reqeust
 
 
