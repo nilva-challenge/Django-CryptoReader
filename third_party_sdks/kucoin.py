@@ -67,7 +67,7 @@ class Kucoin:
 
         Args:
             method (str) : method name like 'GET'
-            url (str) : path of the target endpoint like 'api/v1/accounts'
+            url (str) : path of the target endpoint like '/api/v1/accounts'
         """
 
         url = "/" + url.strip("/")  # normalize url
