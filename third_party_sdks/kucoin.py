@@ -97,13 +97,13 @@ class Kucoin:
 
         full_url = urljoin(self.base_url, url)
         headers = self.generate_header()
-        reqeust = requests.request(
+        response = requests.request(
             method,
             full_url,
             headers=headers,
             data=data,
             params=parameters,
         )
-        return reqeust
+        return response
 
 
