@@ -4,7 +4,6 @@ import base64
 import hashlib
 import hmac
 import time
-from typing import Any
 
 import requests
 from requests.compat import urljoin
