@@ -73,7 +73,6 @@ class Kucoin:
         url = "/" + url.strip("/")  # normalize url
 
         str_to_sign = str(self.now_as_mili) + method.upper() + url
-        print(str_to_sign)
         self.signature = base64.b64encode(
             hmac.new(
                 self.secret.encode("utf-8"), str_to_sign.encode("utf-8"), hashlib.sha256
