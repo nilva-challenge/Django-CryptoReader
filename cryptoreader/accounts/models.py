@@ -28,6 +28,11 @@ class KucoinAccountManager(models.Manager):
 
 
 class KucoinAccount(models.Model):
+    user = models.OneToOneField(
+        User,
+        models.CASCADE,
+        related_name="kuicon_account",
+    )
     key = models.CharField(max_length=248)
     secret = models.CharField(max_length=248)
     passphrase = models.CharField(max_length=558)
