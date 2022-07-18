@@ -7,7 +7,7 @@ import time
 import json
 
 import requests
-from requests.compat import urljoin
+from urllib.parse import urlencode, urljoin
 
 
 class Kucoin:
@@ -81,6 +81,34 @@ class Kucoin:
             hmac.new(
                 self.secret.encode("utf-8"), str_to_sign.encode("utf-8"), hashlib.sha256
             ).digest()
+        )
+
+    def post_query(self, url: str, data: dict) -> requests.Response:
+        method = "POST"
+        data = self.dict_to_json(data)
+
+        self._generate_signature(method, url, data)
+        headers = self._generate_header()
+
+        return self.raw_query(
+            method,
+            url,
+            headers=headers,
+            data=data,
+        )
+
+    def get_query(self, url: str, parameters: dict) -> requests.Response:
+        method = "GET"
+        parameters = urlencode(parameters)
+
+        # parameters should have the character "?" at the beginning of themself
+        self._generate_signature(method, url, "?" + parameters)
+        headers = self._generate_header()
+        return self.raw_query(
+            method,
+            url,
+            headers=headers,
+            parameters=parameters,
         )
 
     def raw_query(
