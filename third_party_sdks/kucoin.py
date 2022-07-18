@@ -14,6 +14,7 @@ import requests
 from sdk import SDK
 
 
+class Kucoin(SDK):
     key: str
     secret: str
     passphrase: str
@@ -144,5 +145,61 @@ from sdk import SDK
         )
 
         return response
+
+    def get_position(self, positionID=None):
+        path = "/api/v1/orders"
+
+        if positionID:
+            path = path + "/" + positionID
+            print(path)
+            response = self.get_query(path)
+            result = response.json()
+
+        else:
+            response = self.get_query(path)
+            result = response.json()["data"]["items"]
+
+        return result
+
+    def new_position(self, **kwargs):
+        """apply for new positions
+
+            Args :
+                side (str) : buy or sell
+                symbol (str) : a valid trading symbol code. e.g. ETH-BTC
+                clientOid (str)	[Optional] : Unique order id created by users to identify their orders, e.g. UUID.
+                type (str) [Optional] : limit or market (default is limit)
+                remark (str) [Optional] : remark for the order, length cannot exceed 100 utf8 characters
+                stp	(str) [Optional]: self trade prevention , CN, CO, CB or DC
+                tradeType (str)	[Optional] : The type of trading : TRADE（Spot Trade） Default is TRADE.
+
+            Addistional args based on type :
+                type : market
+                    size (str) [Optional] : Desired amount in base currency
+                    funds (str) [Optional] : The desired amount of quote currency to use
+
+                type : limit
+                    price (str) : price per base currency
+                    size (str) : amount of base currency to buy or sell
+                    timeInForce	(str) [Optional] : GTC, GTT, IOC, or FOK (default is GTC), read Time In Force.
+                    cancelAfter	(int) [Optional] : cancel after n seconds, requires timeInForce to be GTT
+                    postOnly (bool) [Optional] : Post only flag, invalid when timeInForce is IOC or FOK
+                    hidden (bool) [Optional] : Order will not be displayed in the order book
+                    iceberg	(bool) [Optional] : Only aportion of the order is displayed in the order book
+                    visibleSize	(str [Optional] : The maximum visible size of an iceberg order
+        Raises:
+            ValueError: pass invalid args or not passed requierd data
+        """
+
+        if not kwargs:
+            raise ValueError(
+                "See this link for more info : https://docs.kucoin.com/#place-a-new-order"
+            )
+
+        kwargs.setdefault("clientOid", str(uuid4()))
+        path = "/api/v1/orders"
+        response = self.post_query(path, **kwargs)
+        print(response.json())
+
 
 
