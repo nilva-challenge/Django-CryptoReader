@@ -83,7 +83,7 @@ class Kucoin:
             ).digest()
         )
 
-    def post_query(self, url: str, data: dict) -> requests.Response:
+    def post_query(self, url: str, data: dict = {}) -> requests.Response:
         method = "POST"
         data = self.dict_to_json(data)
 
