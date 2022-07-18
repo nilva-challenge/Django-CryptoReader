@@ -3,14 +3,17 @@
 import base64
 import hashlib
 import hmac
-import time
 import json
+import time
+from urllib import response
+from urllib.parse import urlencode, urljoin
+from uuid import uuid4
 
 import requests
-from urllib.parse import urlencode, urljoin
+
+from sdk import SDK
 
 
-class Kucoin:
     key: str
     secret: str
     passphrase: str
