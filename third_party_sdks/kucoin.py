@@ -45,7 +45,7 @@ class Kucoin:
     def authenticate(self):
         ...
 
-    def generate_header(self) -> dict:
+    def _generate_header(self) -> dict:
         """Generating header for request, based on the instance data
 
         Returns:
@@ -58,21 +58,24 @@ class Kucoin:
             "KC-API-TIMESTAMP": str(self.now_as_mili),
             "KC-API-PASSPHRASE": self.passphrase,
             "KC-API-KEY-VERSION": "2",
+            "Content-Type": "application/json",
         }
         return headers
 
-    def generate_signature(self, method: str, url: str) -> None:
+    def _generate_signature(self, method: str, url: str, body="") -> None:
         """Generate a new signature based on the method name and URL and time,
-        to confirm the request from Kucoin
+        to confirm the request from Kucoin,
+        [RUN BEFORE generate_header MEHTOD]
 
         Args:
             method (str) : method name like 'GET'
             url (str) : path of the target endpoint like '/api/v1/accounts'
+            body (str) : body of request
         """
 
         url = "/" + url.strip("/")  # normalize url
+        str_to_sign = str(self.now_as_mili) + method.upper() + url + body
 
-        str_to_sign = str(self.now_as_mili) + method.upper() + url
         self.signature = base64.b64encode(
             hmac.new(
                 self.secret.encode("utf-8"), str_to_sign.encode("utf-8"), hashlib.sha256
