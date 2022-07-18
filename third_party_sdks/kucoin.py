@@ -97,12 +97,16 @@ class Kucoin:
             data=data,
         )
 
-    def get_query(self, url: str, parameters: dict) -> requests.Response:
+    def get_query(self, url: str, parameters: dict = {}) -> requests.Response:
         method = "GET"
-        parameters = urlencode(parameters)
-
+        if parameters != {}:
         # parameters should have the character "?" at the beginning of themself
-        self._generate_signature(method, url, "?" + parameters)
+            data = "?" + urlencode(parameters)
+        else:
+            data = ""
+
+        self._generate_signature(method, url, data)
+
         headers = self._generate_header()
         return self.raw_query(
             method,
