@@ -78,7 +78,7 @@ class Kucoin(SDK):
             body (str) : body of request
         """
 
-        url = "/" + url.strip("/")  # normalize url
+        url = "/" + url.strip().strip("/")  # normalize url
         str_to_sign = str(self.now_as_mili) + method.upper() + url + body
 
         self.signature = base64.b64encode(
