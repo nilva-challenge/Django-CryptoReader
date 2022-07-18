@@ -87,7 +87,17 @@ class Kucoin(SDK):
             ).digest()
         )
 
-    def post_query(self, url: str, data: dict = {}) -> requests.Response:
+    def post_query(self, url: str, **data: dict) -> requests.Response:
+        """Send POST query to the API
+
+        Args:
+            url (str): path of endpoint
+            data (dict, optional): body of request. Defaults to {}.
+
+        Returns:
+            requests.Response: result of query
+        """
+
         method = "POST"
         data = self.dict_to_json(data)
 
@@ -101,7 +111,17 @@ class Kucoin(SDK):
             data=data,
         )
 
-    def get_query(self, url: str, parameters: dict = {}) -> requests.Response:
+    def get_query(self, url: str, **parameters: dict) -> requests.Response:
+        """Send GET Query to the API
+
+        Args:
+            url (str): path of endpoint
+            parameters (dict, optional): parameters of url. Defaults to {}.
+
+        Returns:
+            requests.Response: result of query
+        """
+
         method = "GET"
         if parameters != {}:
         # parameters should have the character "?" at the beginning of themself
@@ -120,7 +140,12 @@ class Kucoin(SDK):
         )
 
     def raw_query(
-        self, method: str, url: str, headers={}, data: dict = {}, parameters: dict = {}
+        self,
+        method: str,
+        url: str,
+        headers: dict = {},
+        data: dict = {},
+        parameters: dict = {},
     ) -> requests.Response:
         """Sending a raw request to the endpoint based on the method name and URL path
 
@@ -146,7 +171,17 @@ class Kucoin(SDK):
 
         return response
 
-    def get_position(self, positionID=None):
+    def get_position(self, positionID: str = None):
+        """get all positions or get a specified position with the id of that
+
+        Args:
+            positionID (str, optional): ID of order. Defaults to None.
+
+        Returns:
+            list : a list of positions
+            dict : details of posistion
+        """
+
         path = "/api/v1/orders"
 
         if positionID:
@@ -161,7 +196,7 @@ class Kucoin(SDK):
 
         return result
 
-    def new_position(self, **kwargs):
+    def new_position(self, **kwargs: dict):
         """apply for new positions
 
             Args :
