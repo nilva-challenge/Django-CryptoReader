@@ -4,6 +4,7 @@ import base64
 import hashlib
 import hmac
 import time
+import json
 
 import requests
 from requests.compat import urljoin
@@ -42,8 +43,8 @@ class Kucoin:
             ).digest()
         )
 
-    def authenticate(self):
-        ...
+    def dict_to_json(self, data) -> str:
+        return json.dumps(data)
 
     def _generate_header(self) -> dict:
         """Generating header for request, based on the instance data
