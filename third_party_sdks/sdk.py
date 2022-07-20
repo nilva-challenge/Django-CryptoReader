@@ -15,5 +15,5 @@ class SDK(ABC):
         ...
 
     @abstractclassmethod
-    def get_position(self):
+    def get_account(self):
         ...

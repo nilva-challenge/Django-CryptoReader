@@ -171,28 +171,28 @@ class Kucoin(SDK):
 
         return response
 
-    def get_position(self, positionID: str = None):
-        """get all positions or get a specified position with the id of that
+    def get_account(self, accountID: str = None):
+        """get all accounts or get a specified account with the id of that
 
         Args:
-            positionID (str, optional): ID of order. Defaults to None.
+            accountID (str, optional): ID of account. Defaults is None.
 
         Returns:
-            list : a list of positions
-            dict : details of posistion
+            list : a list of accounts
+            dict : details of account
         """
 
-        path = "/api/v1/orders"
+        path = "/api/v1/accounts"
 
-        if positionID:
-            path = path + "/" + positionID
+        if accountID:
+            path = path + "/" + accountID
             print(path)
             response = self.get_query(path)
             result = response.json()
 
         else:
             response = self.get_query(path)
-            result = response.json()["data"]["items"]
+            result = response.json()["data"]
 
         return result
 
