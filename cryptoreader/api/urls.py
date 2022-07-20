@@ -5,7 +5,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 from rest_framework import routers
-from cryptoreader.api.views import UserViewSet
+from cryptoreader.api.views import KucoinAccountViewSet, UserViewSet
 
 router = routers.DefaultRouter()
 router.register("kucoinaccount", KucoinAccountViewSet)

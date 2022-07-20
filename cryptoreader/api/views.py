@@ -1,4 +1,6 @@
 from cryptoreader.accounts.serializers import (
+    KucoinAccount,
+    KucoinAccountSerializer,
     User,
     UserSerializer,
 )
@@ -93,5 +95,71 @@ class UserViewSet(viewsets.ViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class KucoinAccountViewSet(viewsets.ViewSet):
+    queryset = KucoinAccount.objects.all()
+    serializer_class = KucoinAccountSerializer
+    lookup_field = "id"
 
-# Create your views here.
+    def get_permissions(self):
+
+        if self.action == "create":
+            permission_classes = [permissions.AllowAny]
+        elif self.action in ["partial_update", "update", "destroy"]:
+            permission_classes = [permissions.IsAdminUser]
+        else:
+            permission_classes = [permissions.IsAdminUser]
+        return [permission() for permission in permission_classes]
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({"request": self.request})
+        return context
+
+    def get_object(self, id):
+        account = KucoinAccount.objects.filter(
+            kuicon_api__user=self.request.user, id=id
+        ).last()
+        if account:
+            return account
+        raise Http404
+
+    @extend_schema(
+        summary="create a new account",
+        request=KucoinAccountSerializer,
+        responses={
+            200: KucoinAccountSerializer,
+            404: None,
+        },
+    )
+    def create(self, request, *args, **kwargs):
+        serializer = KucoinAccountSerializer(
+            data=request.data, context={"request": request}
+        )
+        if serializer.is_valid(RAISE_ERROR_IF_INVALID):
+            serializer.save()
+            return Response(serializer.data, status.HTTP_201_CREATED)
+
+    @extend_schema(
+        summary="get last account",
+        responses={
+            200: KucoinAccountSerializer,
+            404: None,
+        },
+    )
+    def retrieve(self, request, *args, **kwargs):
+        account = self.get_object(kwargs.setdefault("id", None))
+        serializer = KucoinAccountSerializer(account)
+        return Response(serializer.data, status.HTTP_200_OK)
+
+    @extend_schema(
+        summary="get all accounts",
+        responses={
+            200: KucoinAccountSerializer(many=True),
+            404: None,
+        },
+    )
+    def list(self, request, *args, **kwargs):
+        user = user = self.request.user
+        accounts = KucoinAccount.objects.filter(user=user)
+        serializer = KucoinAccountSerializer(accounts, many=True)
+        return Response(serializer.data, status.HTTP_200_OK)

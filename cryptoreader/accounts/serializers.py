@@ -1,4 +1,5 @@
-from .models import User
+from rest_framework import serializers
+from .models import User, KucoinAccount
 from django.contrib.auth.hashers import make_password
 
 
@@ -21,3 +22,12 @@ class UserSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
+class KucoinAccountSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = KucoinAccount
+        exclude = ["pk_uuid"]
+
+    def validate(self, attrs):
+        return super().validate(attrs)

@@ -1,3 +1,4 @@
+from uuid import uuid4
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.exceptions import FieldError
@@ -55,3 +56,40 @@ class User(AbstractUser):
 
     def get_passphrase(self):
         return tools.decrypt(self.passphrase)
+
+
+class KucoinAccount(models.Model):
+    class TypeAccount(models.TextChoices):
+        main = "main", "Main"
+        trade = "trade", "Trade"
+        margin = "margain", "Margin"
+
+    pk_uuid = models.UUIDField(
+        primary_key=True,
+        editable=False,
+        default=uuid4,
+    )
+
+    user = models.ForeignKey(
+        User,
+        models.CASCADE,
+    )
+    id = models.CharField(max_length=24)  # accountId
+    type = models.CharField(
+        max_length=7,
+        choices=TypeAccount.choices,
+        default=TypeAccount.main,
+    )
+    currency = models.CharField(max_length=24)  # Currency
+    balance = models.DecimalField(
+        max_digits=20, decimal_places=10
+    )  # Total assets of a currency
+    available = models.DecimalField(
+        max_digits=20, decimal_places=10
+    )  # Available assets of a currency
+    holds = models.DecimalField(
+        max_digits=20, decimal_places=10
+    )  # Hold assets of a currency
+
+    def __str__(self) -> str:
+        return str(self.kucoin_api)
