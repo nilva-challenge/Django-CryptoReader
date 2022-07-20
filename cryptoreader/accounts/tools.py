@@ -13,7 +13,6 @@ def encrypt(pas):
         encrypt_pass = base64.urlsafe_b64encode(encrypt_pass).decode("ascii")
         return encrypt_pass
     except Exception as e:
-        print(e)
         return None
 
 
@@ -24,5 +23,4 @@ def decrypt(pas):
         decod_pass = cipher_pass.decrypt(pas).decode("ascii")
         return decod_pass
     except Exception as e:
-        print(e)
         return None
