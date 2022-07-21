@@ -116,6 +116,7 @@ class UserViewSet(viewsets.ViewSet):
 class KucoinAccountViewSet(viewsets.ViewSet):
     queryset = KucoinAccount.objects.all()
     serializer_class = KucoinAccountSerializer
+    lookup_field = "id"
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_serializer_context(self):
