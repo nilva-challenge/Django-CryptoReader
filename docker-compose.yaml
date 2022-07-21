@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+
+  django:
+    build:
+      dockerfile: ./dockerfile
+      args:
+        - REQUIREMENTS_FILE=${REQUIREMENTS_FILE}
+    depends_on:
+      - redis
+      - postgres
+    
+      
+  redis:
+    image: redis:alpine
+    restart: always
+
+  postgres:
+    image: postgres:alpine
+    restart: always
+    volumes:
+      - db-data:/var/lib/postgresql/data:rw
+      
+  nginx:
+    build:
+      dockerfile: ./dockerfile.nginx
+    restart: always
+
+  celery_beat:
+    build:
+      dockerfile: ./dockerfile
+      args:
+        - REQUIREMENTS_FILE=${REQUIREMENTS_FILE}
+    depends_on:
+      - redis
+
+  celery_worker:
+    build:
+      dockerfile: ./dockerfile
+      args:
+        - REQUIREMENTS_FILE=${REQUIREMENTS_FILE}
+    depends_on:
+      - redis
+
+volumes:
+  db-data:
