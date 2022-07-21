@@ -14,9 +14,17 @@ from rest_framework import status
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.decorators.vary import vary_on_headers
+from third_party_sdks.sdk_api import fetch_accounts
+
 # Raise an error in the endpoint for invalid data
 RAISE_ERROR_IF_INVALID = True
 CACHE_TTL_ACCOUNTS = 30
+
+
+def load_accounts_from_kucoin_by_user(user: User) -> dict:
+    login_info = user.get_key(), user.get_secret(), user.get_passphrase()
+    accounts = fetch_accounts(*login_info)
+    return accounts
 
 
 class UserViewSet(viewsets.ViewSet):
@@ -179,3 +187,30 @@ class KucoinAccountViewSet(viewsets.ViewSet):
         accounts = KucoinAccount.objects.filter(user=user)
         serializer = KucoinAccountSerializer(accounts, many=True)
         return Response(serializer.data, status.HTTP_200_OK)
+
+    @extend_schema(
+        summary="get the open accounts",
+        responses={
+            200: KucoinAccountSerializer(many=True),
+            404: None,
+        },
+    )
+    @action(detail=False, methods=("GET",))
+    @method_decorator(cache_page(CACHE_TTL_ACCOUNTS))
+    @method_decorator(
+        vary_on_headers(
+            "Authorization",
+        )
+    )
+    def list_current(self, request, *args, **kwargs):
+        """fetch last avilable accounts form kucoin and instert to db"""
+        
+        user = self.request.user
+        accounts = load_accounts_from_kucoin_by_user(user)
+        serializer = KucoinAccountSerializer(
+            data=accounts, many=True, context={"request": request}
+        )
+
+        if serializer.is_valid(RAISE_ERROR_IF_INVALID):
+            serializer.save()
+            return Response(serializer.data, status.HTTP_200_OK)
