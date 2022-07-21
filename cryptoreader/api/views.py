@@ -11,8 +11,12 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_headers
 # Raise an error in the endpoint for invalid data
 RAISE_ERROR_IF_INVALID = True
+CACHE_TTL_ACCOUNTS = 30
 
 
 class UserViewSet(viewsets.ViewSet):
@@ -44,6 +48,12 @@ class UserViewSet(viewsets.ViewSet):
         },
     )
     @action(methods=["GET"], detail=False)
+    @method_decorator(cache_page(60 * 60 * 24))
+    @method_decorator(
+        vary_on_headers(
+            "Authorization",
+        )
+    )
     def me(self, request):
         user = self.get_object()
         serializer = UserSerializer(user)
@@ -157,6 +167,12 @@ class KucoinAccountViewSet(viewsets.ViewSet):
             200: KucoinAccountSerializer(many=True),
             404: None,
         },
+    )
+    @method_decorator(cache_page(CACHE_TTL_ACCOUNTS))
+    @method_decorator(
+        vary_on_headers(
+            "Authorization",
+        )
     )
     def list(self, request, *args, **kwargs):
         user = user = self.request.user
