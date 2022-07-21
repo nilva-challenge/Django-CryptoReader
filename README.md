@@ -1,3 +1,21 @@
+# CryptoTracker project description
+We implement a crypto tracker project using djano rest framework. 
+
+Check List of requested features:
+- [x] User able to signup (name, username, password and KuCoin information:{api_key, secret_key and passphrase}) 
+- [x] User able to sign in (using django rest token authentication)
+- [x] User able to request position tracking and cancel it. (using **APScheduler** library every 30 secs fetch user's positions)
+- [x] User able to see list of open position
+- [x] Application track user's positions (if user requested for it) every 30 secs
+- [x] Application stores users that requested for positions tracking and track their positions in a interval (Handeling muti users)
+- [x] Application start position tracking by starting application (resume traking with restarting application)
+
+Also you can see the API documentation created using postman in the link below:
+
+[CryptoTracker API documentation](https://documenter.getpostman.com/view/2983315/UzR1L3Ai)
+
+
+
 # In name of Allah
 
 ## Introduction
