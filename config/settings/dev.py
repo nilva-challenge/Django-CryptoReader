@@ -69,5 +69,5 @@ SPECTACULAR_SETTINGS = {
 }
 
 STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "static"
+STATIC_ROOT = BASE_DIR / "statics"
 STATICFILES_DIRS = []
