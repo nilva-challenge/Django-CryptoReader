@@ -11,7 +11,7 @@ from uuid import uuid4
 
 import requests
 
-from sdk import SDK
+from third_party_sdks.sdk import SDK
 
 
 class Kucoin(SDK):
