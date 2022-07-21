@@ -116,17 +116,7 @@ class UserViewSet(viewsets.ViewSet):
 class KucoinAccountViewSet(viewsets.ViewSet):
     queryset = KucoinAccount.objects.all()
     serializer_class = KucoinAccountSerializer
-    lookup_field = "id"
-
-    def get_permissions(self):
-
-        if self.action == "create":
-            permission_classes = [permissions.AllowAny]
-        elif self.action in ["partial_update", "update", "destroy"]:
-            permission_classes = [permissions.IsAdminUser]
-        else:
-            permission_classes = [permissions.IsAdminUser]
-        return [permission() for permission in permission_classes]
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -134,9 +124,7 @@ class KucoinAccountViewSet(viewsets.ViewSet):
         return context
 
     def get_object(self, id):
-        account = KucoinAccount.objects.filter(
-            kuicon_api__user=self.request.user, id=id
-        ).last()
+        account = KucoinAccount.objects.filter(user=self.request.user, id=id).last()
         if account:
             return account
         raise Http404
@@ -158,7 +146,7 @@ class KucoinAccountViewSet(viewsets.ViewSet):
             return Response(serializer.data, status.HTTP_201_CREATED)
 
     @extend_schema(
-        summary="get last account",
+        summary="get the list of accounts specified with the ID ",
         responses={
             200: KucoinAccountSerializer,
             404: None,
@@ -170,7 +158,7 @@ class KucoinAccountViewSet(viewsets.ViewSet):
         return Response(serializer.data, status.HTTP_200_OK)
 
     @extend_schema(
-        summary="get all accounts",
+        summary="get the all available accounts",
         responses={
             200: KucoinAccountSerializer(many=True),
             404: None,
