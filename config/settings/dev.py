@@ -4,14 +4,14 @@ import environ
 import os
 
 env = environ.Env()
-environ.Env.read_env(os.path.join(BASE_DIR / "django.dev.env"))
+environ.Env.read_env(os.path.join(BASE_DIR / "config/django.dev.env"))
 
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = str(env("ALLOWED_HOSTS")).strip().split()
+ALLOWED_HOSTS = str(env("ALLOWED_HOSTS")).strip('"').strip().split()
 APPEND_SLASH = env("APPEND_SLASH")
 
 # encrypt key for encrypting and decrypting data
