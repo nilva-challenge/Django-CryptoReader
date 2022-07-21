@@ -1,7 +1,7 @@
 from django.db import models
 from accounts.models import CustomUser
 
-# We just add some fields of a real position. other fields can added in the same way    
+# we just add some fields of a real position. other fields can added in the same way    
 class Order(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     order_id = models.CharField(max_length=100)
@@ -15,6 +15,7 @@ class Order(models.Model):
     isActive = models.CharField(max_length=20)
     order_createdAt = models.IntegerField()    
 
+# check user must be tracked or not
 class ActiveTrackingUser(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     track = models.BooleanField(default=False)

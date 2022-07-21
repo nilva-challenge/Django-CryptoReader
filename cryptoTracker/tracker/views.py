@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .utils import api_kucoin
 
+# get list of open positions
 class OpenPositionsAPIView(APIView):
     permission_classes = (IsAuthenticated, )
 
