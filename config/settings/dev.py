@@ -1,10 +1,10 @@
 from config.settings.base import *
 
-import environ, os
+import environ
+import os
 
 env = environ.Env()
-
-environ.Env.read_env(os.path.join(BASE_DIR / "config/django.dev.env"))
+environ.Env.read_env(os.path.join(BASE_DIR / "django.dev.env"))
 
 SECRET_KEY = env("SECRET_KEY")
 
