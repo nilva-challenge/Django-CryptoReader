@@ -31,6 +31,7 @@ class User(AbstractUser):
     key = models.CharField(max_length=248)
     secret = models.CharField(max_length=248)
     passphrase = models.CharField(max_length=558)
+    is_active = models.BooleanField(default=True)
 
     # change the default model manager
     objects = CustomUserManager()
