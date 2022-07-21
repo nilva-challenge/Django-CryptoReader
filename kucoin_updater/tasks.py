@@ -2,14 +2,14 @@ from celery import Celery
 from celery.utils.log import get_task_logger
 
 # setup django env
-import init_django
+from . import init_django
 
 from cryptoreader.accounts import models, serializers
 from django.http import HttpRequest
 
 from third_party_sdks.sdk_api import fetch_accounts
 
-app = Celery("tasks", broker="redis://localhost:6379/2")
+app = Celery("tasks", broker="redis://redis:6379/2")
 logger = get_task_logger(__name__)
 
 

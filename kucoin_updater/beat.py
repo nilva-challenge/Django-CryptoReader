@@ -1,4 +1,4 @@
-from tasks import app, update_all_user_kucoin_account
+from kucoin_updater.tasks import app, update_all_user_kucoin_account
 
 REPEAT_EVERY = 30
 
