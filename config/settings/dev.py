@@ -15,6 +15,16 @@ ENCRYPT_KEY = b"f7DwTK5K6EwmA30THAxnXgBKy_v969ItANlVGhi4C-0="
 
 ROOT_URLCONF = "config.urls.dev"
 
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": env("POSTGRES_DB"),
+        "USER": env("POSTGRES_USER"),
+        "PASSWORD": env("POSTGRES_PASSWORD"),
+        "HOST": "postgres",
+        "PORT": "5432",
+    }
+}
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
