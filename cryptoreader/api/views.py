@@ -193,7 +193,7 @@ class KucoinAccountViewSet(viewsets.ViewSet):
     )
     def list_current(self, request, *args, **kwargs):
         """fetch last avilable accounts form kucoin and instert to db"""
-        
+
         user = self.request.user
         accounts = load_accounts_from_kucoin_by_user(user)
         serializer = KucoinAccountSerializer(
