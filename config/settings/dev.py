@@ -9,9 +9,6 @@ INSTALLED_APPS += [
     "cryptoreader.api",
 ]
 
-# encrypt key for encrypting and decrypting data
-# generated with cryptography.fernet.Fernet.generate_key()
-ENCRYPT_KEY = b"f7DwTK5K6EwmA30THAxnXgBKy_v969ItANlVGhi4C-0="
 
 ROOT_URLCONF = "config.urls.dev"
 
@@ -30,6 +27,7 @@ REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
     ],
 }
 
