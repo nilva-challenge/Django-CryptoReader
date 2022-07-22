@@ -1,0 +1,7 @@
+*.pyc
+__pycache__
+*.swp
+*.env
+.vscode
+*.sqlite
+static/*
