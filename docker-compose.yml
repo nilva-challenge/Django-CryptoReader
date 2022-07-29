@@ -1,0 +1,84 @@
+version: "3.7"
+
+
+services:
+
+
+  redis_service:
+    image: redis:alpine
+    container_name: djang_redis
+    ports:
+      - "6380:6379"
+
+    networks:
+      forum_net:
+        ipv4_address: 192.167.0.2
+
+
+  db_service:
+    image: postgres
+    volumes:
+      - ./db:/var/lib/postgresql/data
+
+    environment:
+      - POSTGRES_DB=crypto_reader
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    container_name: django_db_service
+
+    ports:
+      - "5434:5432"
+
+
+    networks:
+      forum_net:
+        ipv4_address: 192.167.0.3
+
+
+
+  django_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/crypto_reader
+      - static:/crypto_reader/static
+      - media:/crypto_reader/media
+    ports:
+      - "8000:8000"
+    container_name: Djservice
+
+
+    depends_on:
+      - db_service
+    networks:
+      forum_net:
+        ipv4_address: 192.167.0.6
+    restart: on-failure
+
+  proxy:
+    build: ./nginx
+    ports:
+      - "80:80"
+
+    volumes:
+      - static:/static
+      - media:/media
+    networks:
+      forum_net:
+        ipv4_address: 192.167.0.7
+
+    depends_on:
+      - django_app
+    restart: on-failure
+
+networks:
+  forum_net:
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.167.0.0/24
+
+volumes:
+  static:
+  media:
