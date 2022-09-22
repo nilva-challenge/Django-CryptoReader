@@ -26,9 +26,9 @@ class CustomManager(BaseUserManager):
         )
         user.save(using=self._db)
         user.set_password(password)
-        user.kucoin_pass_pharese = Cipher.encrypt_message(kucoin_pass_pharese)
-        user.kucoin_api_key = Cipher.encrypt_message(kucoin_api_key)
-        user.kucoin_api_secret = Cipher.encrypt_message(kucoin_api_secret)
+        user.kucoin_pass_pharese = encrypt_message(kucoin_pass_pharese)
+        user.kucoin_api_key = encrypt_message(kucoin_api_key)
+        user.kucoin_api_secret = encrypt_message(kucoin_api_secret)
         user.is_staff = True
         user.is_superuser = True
         user.save()
