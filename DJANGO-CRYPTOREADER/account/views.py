@@ -1,39 +1,41 @@
-from django.shortcuts import render
 from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED
 from rest_framework.response import Response
 from rest_framework.generics import CreateAPIView
 from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 from .models import User
+from django.contrib.auth import login
+from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED , HTTP_202_ACCEPTED
 from .serializers import RegisterSerializer, LoginSerializer
+from rest_framework.exceptions import NotFound
 
 
-class RegisterView(CreateAPIView):
-    serializer_class = RegisterSerializer
+class RegisterView(ModelViewSet):
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(
-            data='registeration done successfully.',
-            status=HTTP_201_CREATED
-        )
+    def get_queryset(self):
+        try:
+            user = User.objects.get(username=self.request.user.username)
+        except User.DoesNotExist:
+            raise NotFound('User not found.')
+
+    def get_serializer_class(self):
+        if self.action in ['create']:
+            return RegisterSerializer
+
+    def perform_create(self, serializer):
+        serializer = serializer.save(data=self.request.data)
+        return serializer
+
+
 
 
 class LoginView(APIView):
-    # def get_serializer_context(self):
-    #     """
-    #     Extra context provided to the serializer class.
-    #     """
-    #     return {
-    #         'username': self.request.data['username'],
-    #         'password': self.request.data['password'],
-    #     }
+    # This view should be accessible also for unauthenticated users.
+    # permission_classes = (permissions.AllowAny,)
 
-    def post(self, request, *args, **kwargs):
-        serializer = LoginSerializer(data=request.data)
+    def post(self, request, format=None):
+        serializer = LoginSerializer(data=self.request.data, context={ 'request': self.request })
         serializer.is_valid(raise_exception=True)
-        return Response(
-            data='login done successfully.',
-            status=HTTP_200_OK
-        )
+        user = serializer.validated_data['user']
+        login(request, user)
+        return Response(None, status=HTTP_202_ACCEPTED)

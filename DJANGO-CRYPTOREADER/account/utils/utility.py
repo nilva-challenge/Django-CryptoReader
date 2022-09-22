@@ -1,5 +1,6 @@
 import re
 from cryptography.fernet import Fernet
+from decouple import config
 
 
 def generate_key():
@@ -8,15 +9,15 @@ def generate_key():
     """
 
     key = Fernet.generate_key()
-    with open("random-key.txt", "wb") as key_file:
-        key_file.write(key)
+    # with open("random-key.txt", "wb") as key_file:
+    #     key_file.write(key)
 
 
 def load_key():
     """
     Load the previously generated key
     """
-    return open("random-key.txt", "rb").read()
+    return config('key')
 
 
 def encrypt_message(message):
@@ -24,12 +25,11 @@ def encrypt_message(message):
     Encrypts a message
     """
     key = load_key()
-    encoded_message = message.encode()
     f = Fernet(key)
-    encrypted_message = f.encrypt(encoded_message)
+    encrypted_message = f.encrypt(bytes(message, encoding='utf8'))
 
-    print(encrypted_message)
-    return encrypted_message
+    # print(encrypted_message.decode("utf-8"))
+    return encrypted_message.decode("utf-8")
 
 
 def decrypt_message(encrypted_message):
@@ -38,5 +38,6 @@ def decrypt_message(encrypted_message):
     """
     key = load_key()
     f = Fernet(key)
-    decrypted_message = f.decrypt(encrypted_message)
-    return decrypted_message
+    decrypted_message = f.decrypt(bytes(encrypted_message, encoding='utf8'))
+    # print(decrypted_message.decode("utf-8"))
+    return decrypted_message.decode("utf-8")

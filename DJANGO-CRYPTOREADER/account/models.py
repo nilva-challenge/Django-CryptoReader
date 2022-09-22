@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-from .utils.cryptography import encrypt_message,decrypt_message
+from .utils.utility import encrypt_message, decrypt_message
 
 
 class CustomManager(BaseUserManager):
@@ -9,13 +9,13 @@ class CustomManager(BaseUserManager):
             raise ValueError("Username is Required.")
         user = self.model(
             username=username,
+            kucoin_pass_pharese=encrypt_message(kucoin_pass_pharese),
+            kucoin_api_key=encrypt_message(kucoin_api_key),
+            kucoin_api_secret=encrypt_message(kucoin_api_secret),
+
         )
-        user.save(using=self._db)
         user.set_password(password)
-        user.kucoin_pass_pharese = encrypt_message(kucoin_pass_pharese)
-        user.kucoin_api_key = encrypt_message(kucoin_api_key)
-        user.kucoin_api_secret = encrypt_message(kucoin_api_secret)
-        user.save()
+        user.save(using=self._db)
         return user
 
     def create_superuser(self, username, kucoin_pass_pharese, kucoin_api_key, kucoin_api_secret, password=None):
@@ -23,15 +23,15 @@ class CustomManager(BaseUserManager):
             raise ValueError("Username is required.")
         user = self.model(
             username=username,
+            kucoin_pass_pharese=encrypt_message(kucoin_pass_pharese),
+            kucoin_api_key=encrypt_message(kucoin_api_key),
+            kucoin_api_secret=encrypt_message(kucoin_api_secret),
+            is_staff=True,
+            is_superuser=True,
+
         )
-        user.save(using=self._db)
         user.set_password(password)
-        user.kucoin_pass_pharese = encrypt_message(kucoin_pass_pharese)
-        user.kucoin_api_key = encrypt_message(kucoin_api_key)
-        user.kucoin_api_secret = encrypt_message(kucoin_api_secret)
-        user.is_staff = True
-        user.is_superuser = True
-        user.save()
+        user.save(using=self._db)
         return user
 
 
@@ -64,6 +64,7 @@ class User(AbstractBaseUser):
     def __str__(self) -> str:
         return f'user name = {self.username}'
 
+    
     class Meta:
         verbose_name = 'User'
         verbose_name_plural = 'Users'
