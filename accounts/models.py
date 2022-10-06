@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.base_user import BaseUserManager
 from django.utils import timezone
 from django.core.signing import Signer
+from .encryption import encrypt, decrypt
 
 signer = Signer()
 
@@ -14,7 +15,7 @@ class UserManager(BaseUserManager):
     '''
 
     def encryption(self, key, secret, passphrase) -> tuple:
-        return signer.sign(key), signer.sign(secret), signer.sign(passphrase)
+        return encrypt(key), encrypt(secret), encrypt(passphrase)
 
     def create_user(self, name, username, kucoin_key, kucoin_secret, kucoin_passphrase, password=None):
 
@@ -64,4 +65,4 @@ class User(AbstractUser):
             Decrypt kucoin details of the user
         '''
 
-        return signer.unsign(key),  signer.unsign(secret),  signer.unsign(passphrase)
+        return decrypt(key),  decrypt(secret),  decrypt(passphrase)
