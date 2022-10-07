@@ -3,11 +3,15 @@ import base64
 import hashlib
 import hmac
 import time
+import json
 import requests
 from accounts.encryption import decrypt
+from django_celery_beat.models import PeriodicTask, IntervalSchedule
+
+schedule, created = IntervalSchedule.objects.get_or_create(every=30, period=IntervalSchedule.SECONDS,)
 
 
-def kucoin_api(key, secret, passphrase, endpoint, params) -> tuple:
+def kucoin_api(key, secret, passphrase, endpoint) -> tuple:
     '''
         Get data from kucoin with specefic header
     '''
@@ -21,7 +25,7 @@ def kucoin_api(key, secret, passphrase, endpoint, params) -> tuple:
 
     # create signature
     now = int(time.time() * 1000)
-    str_to_sign = str(now) + 'GET' + endpoint + '?' + params
+    str_to_sign = str(now) + 'GET' + endpoint
     signature = base64.b64encode(
         hmac.new(secret.encode('utf-8'), str_to_sign.encode('utf-8'), hashlib.sha256).digest())
     passphrase = base64.b64encode(
@@ -37,5 +41,18 @@ def kucoin_api(key, secret, passphrase, endpoint, params) -> tuple:
         "KC-API-KEY-VERSION": "2"
     }
 
-    response = requests.request('get', url, headers=headers, params=params)
+    response = requests.request('get', url, headers=headers)
     return response.status_code, response.json()
+
+
+def create_or_delete_celery_task(user, track):
+    if track:
+        PeriodicTask.objects.get_or_create(interval=schedule, name=f"User({user.pk})",
+                                           task='kucoin.tasks.tracking_position_per_user',
+                                           args=json.dumps([f"{user.pk}"]),)
+
+        return {'message': 'Tracking Enabled'}
+
+    PeriodicTask.objects.filter(name=f"User({user.pk})").delete()
+
+    return {'message': 'Tracking Disabled'}
