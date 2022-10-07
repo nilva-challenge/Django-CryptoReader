@@ -18,7 +18,7 @@ class OpenPositions(GenericAPIView):
         user = request.user
         update_orders(user)
         orders = Order.objects.filter(user=user, isActive=True)
-        data = OrderSerializers(orders, many=True).data
+        data = OrderSerializers(orders, many=True).data or 'Empty'
 
         return Response(data, status=200)
 
@@ -43,6 +43,6 @@ class TrackPositions(GenericAPIView):
     def get(self, request) -> Response:
         user = request.user
         orders = Order.objects.filter(user=user)
-        data = OrderSerializers(orders, many=True).data
+        data = OrderSerializers(orders, many=True).data or 'Empty'
 
         return Response(data, status=200)
