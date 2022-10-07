@@ -72,7 +72,7 @@ def update_orders(user):
                                   user.kucoin_passphrase, '/api/v1/orders')
 
     if response.get('code') == '200000':
-        items = response['items']
+        items = response['data']['items']
 
         for item in items:
             Order.objects.update_or_create(
