@@ -16,6 +16,7 @@ class OpenPositions(GenericAPIView):
 
     def get(self, request) -> Response:
         user = request.user
+        update_orders(user)
         orders = Order.objects.filter(user=user, isActive=True)
         data = OrderSerializers(orders, many=True).data
 
@@ -24,7 +25,7 @@ class OpenPositions(GenericAPIView):
 
 class TrackPositions(GenericAPIView):
     '''
-        Enable or disable Tracking positions for each user
+        Enable or disable tracking positions for each user & see list of tracking positions
     '''
 
     permission_classes = (IsAuthenticated,)
@@ -39,16 +40,9 @@ class TrackPositions(GenericAPIView):
 
         return Response(data, status=200)
 
-
-class UpdateOpenPositions(GenericAPIView):
-    '''
-        Update manually open (active) positions list. 
-    '''
-
-    permission_classes = (IsAuthenticated,)
-
-    def post(self, request):
+    def get(self, request) -> Response:
         user = request.user
-        data, status = update_orders(user)
+        orders = Order.objects.filter(user=user)
+        data = OrderSerializers(orders, many=True).data
 
-        return Response(data, status=status)
+        return Response(data, status=200)

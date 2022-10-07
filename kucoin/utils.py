@@ -83,8 +83,3 @@ def update_orders(user):
                 remark=item['remark'],
                 stp=item['stp'],
                 tradeType=item['tradeType'], isActive=item['isActive'])
-
-    if status == 200:
-        return {'message': 'Open position list updated successfully'}, 200
-
-    return {'message': 'Connection error'}, 400
