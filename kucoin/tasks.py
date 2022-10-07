@@ -1,6 +1,5 @@
-from .utils import kucoin_api
+from .utils import update_orders
 from accounts.models import User
-from .models import Order
 from crypto_reader.celery import app
 
 
@@ -11,18 +10,4 @@ def tracking(user_pk):
     '''
 
     user = User.objects.get(pk=user_pk)
-    status, response = kucoin_api(user.kucoin_key, user.kucoin_secret,
-                                  user.kucoin_passphrase, '/api/v1/orders')
-
-    if response['code'] == '200000':
-        items = response['items']
-
-        for item in items:
-            Order.objects.update_or_create(
-                user=user, clientOid=item['clientOid'],
-                side=item['side'],
-                symbol=item['symbol'],
-                type=item['type'],
-                remark=item['remark'],
-                stp=item['stp'],
-                tradeType=item['tradeType'], isActive=item['isActive'])
+    update_orders(user)

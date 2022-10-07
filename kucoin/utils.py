@@ -7,6 +7,7 @@ import json
 import requests
 from accounts.encryption import decrypt
 from django_celery_beat.models import PeriodicTask, IntervalSchedule
+from .models import Order
 
 schedule, created = IntervalSchedule.objects.get_or_create(every=30, period=IntervalSchedule.SECONDS,)
 
@@ -46,6 +47,10 @@ def kucoin_api(key, secret, passphrase, endpoint) -> tuple:
 
 
 def create_or_delete_celery_task(user, track):
+    '''
+        Create or delete celery task based on track field
+    '''
+
     if track:
         PeriodicTask.objects.get_or_create(interval=schedule, name=f"User({user.pk})",
                                            task='kucoin.tasks.tracking_position_per_user',
@@ -56,3 +61,30 @@ def create_or_delete_celery_task(user, track):
     PeriodicTask.objects.filter(name=f"User({user.pk})").delete()
 
     return {'message': 'Tracking Disabled'}
+
+
+def update_orders(user):
+    '''
+        Update order objects for user
+    '''
+
+    status, response = kucoin_api(user.kucoin_key, user.kucoin_secret,
+                                  user.kucoin_passphrase, '/api/v1/orders')
+
+    if response.get('code') == '200000':
+        items = response['items']
+
+        for item in items:
+            Order.objects.update_or_create(
+                user=user, clientOid=item['clientOid'],
+                side=item['side'],
+                symbol=item['symbol'],
+                type=item['type'],
+                remark=item['remark'],
+                stp=item['stp'],
+                tradeType=item['tradeType'], isActive=item['isActive'])
+
+    if status == 200:
+        return {'message': 'Open position list updated successfully'}, 200
+
+    return {'message': 'Connection error'}, 400

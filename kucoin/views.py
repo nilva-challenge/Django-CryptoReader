@@ -3,7 +3,7 @@ from kucoin.models import Order
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .serializers import OrderSerializers, TrackSerializers
-from .utils import create_or_delete_celery_task
+from .utils import create_or_delete_celery_task, update_orders
 
 
 class OpenPositions(GenericAPIView):
@@ -38,3 +38,17 @@ class TrackPositions(GenericAPIView):
         data = create_or_delete_celery_task(user, track)
 
         return Response(data, status=200)
+
+
+class UpdateOpenPositions(GenericAPIView):
+    '''
+        Update manually open (active) positions list. 
+    '''
+
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        user = request.user
+        data, status = update_orders(user)
+
+        return Response(data, status=status)
