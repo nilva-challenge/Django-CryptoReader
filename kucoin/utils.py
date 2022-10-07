@@ -7,17 +7,19 @@ import requests
 from accounts.encryption import decrypt
 
 
-def kucoin_api(key, secret, passphrase, endpoint, params):
+def kucoin_api(key, secret, passphrase, endpoint, params) -> tuple:
     '''
         Get data from kucoin with specefic header
     '''
 
     url = 'https://api.kucoin.com' + endpoint
 
+    # decrypt data
     key = decrypt(key)
     secret = decrypt(secret)
     passphrase = decrypt(passphrase)
 
+    # create signature
     now = int(time.time() * 1000)
     str_to_sign = str(now) + 'GET' + endpoint + '?' + params
     signature = base64.b64encode(

@@ -3,7 +3,11 @@ import base64
 from django.conf import settings
 
 
-def encrypt(txt):
+def encrypt(txt) -> str:
+    '''
+        Encrypt data
+    '''
+
     try:
         txt = str(txt)
         cipher_suite = Fernet(settings.ENCRYPT_KEY)
@@ -14,7 +18,11 @@ def encrypt(txt):
         return None
 
 
-def decrypt(txt):
+def decrypt(txt) -> str:
+    '''
+        Decrypt data
+    '''
+
     try:
         txt = base64.urlsafe_b64decode(txt)
         cipher_suite = Fernet(settings.ENCRYPT_KEY)

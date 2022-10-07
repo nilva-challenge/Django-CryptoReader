@@ -15,6 +15,10 @@ class UserManager(BaseUserManager):
     '''
 
     def encryption(self, key, secret, passphrase) -> tuple:
+        '''
+            Encrypt key, secret & passphrase
+        '''
+
         return encrypt(key), encrypt(secret), encrypt(passphrase)
 
     def create_user(self, name, username, kucoin_key, kucoin_secret, kucoin_passphrase, password=None):

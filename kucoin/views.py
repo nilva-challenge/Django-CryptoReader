@@ -11,7 +11,7 @@ class OpenPositions(GenericAPIView):
 
     permission_classes = (IsAuthenticated,)
 
-    def get(self, request):
+    def get(self, request) -> Response:
         user = request.user
         status, response = kucoin_api(user.kucoin_key, user.kucoin_secret,
                                       user.kucoin_passphrase, '/api/v1/orders', 'status=active')
