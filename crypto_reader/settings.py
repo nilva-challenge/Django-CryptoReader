@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 from datetime import timedelta
 
@@ -142,11 +143,14 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # celery settings
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+# SECURITY WARNING: don't use raw password in production!
+CELERY_BROKER_URL = 'redis://default:blR9KZ39lE6cBf8JraZsVtbpU1Bruh3U@redis-18003.c275.us-east-1-4.ec2.cloud.redislabs.com:18003'
+CELERY_RESULT_BACKEND = 'redis://default:blR9KZ39lE6cBf8JraZsVtbpU1Bruh3U@redis-18003.c275.us-east-1-4.ec2.cloud.redislabs.com:18003'
