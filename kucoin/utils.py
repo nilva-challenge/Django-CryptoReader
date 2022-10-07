@@ -9,8 +9,6 @@ from accounts.encryption import decrypt
 from django_celery_beat.models import PeriodicTask, IntervalSchedule
 from .models import Order
 
-schedule, created = IntervalSchedule.objects.get_or_create(every=30, period=IntervalSchedule.SECONDS,)
-
 
 def kucoin_api(key, secret, passphrase, endpoint) -> tuple:
     '''
@@ -50,6 +48,8 @@ def create_or_delete_celery_task(user, track):
     '''
         Create or delete celery task based on track field
     '''
+
+    schedule, created = IntervalSchedule.objects.get_or_create(every=30, period=IntervalSchedule.SECONDS,)
 
     if track:
         PeriodicTask.objects.get_or_create(interval=schedule, name=f"User({user.pk})",
