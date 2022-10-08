@@ -8,7 +8,7 @@ from .utils import create_or_delete_celery_task, update_orders
 
 class OpenPositions(GenericAPIView):
     '''
-        Get and view open (active) positions. 
+        Get and view open (active) positions. Orders save as objects in database with Order model and querying to get those.
     '''
 
     permission_classes = (IsAuthenticated,)
@@ -25,7 +25,7 @@ class OpenPositions(GenericAPIView):
 
 class TrackPositions(GenericAPIView):
     '''
-        Enable or disable tracking positions for each user & see list of tracking positions
+        Enable or disable tracking positions for each user & see list of tracking positions. enable/disable tracking using create/delete celery task. Get list of tracking positions using querying Order model.
     '''
 
     permission_classes = (IsAuthenticated,)

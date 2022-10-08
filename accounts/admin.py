@@ -5,6 +5,10 @@ from django.contrib.auth.admin import UserAdmin as DefaultUserAdmin
 
 @admin.register(User)
 class UserAdmin(DefaultUserAdmin):
+    '''
+        Change field of default user admin page
+    '''
+
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
         ('Personal info',

@@ -32,6 +32,7 @@ def kucoin_api(key, secret, passphrase, endpoint) -> tuple:
                  passphrase.encode('utf-8'),
                  hashlib.sha256).digest())
 
+    # create headers for requests
     headers = {
         "KC-API-SIGN": signature,
         "KC-API-TIMESTAMP": str(now),
@@ -44,7 +45,7 @@ def kucoin_api(key, secret, passphrase, endpoint) -> tuple:
     return response.status_code, response.json()
 
 
-def create_or_delete_celery_task(user, track):
+def create_or_delete_celery_task(user, track) -> dict:
     '''
         Create or delete celery task based on track field
     '''
@@ -65,15 +66,17 @@ def create_or_delete_celery_task(user, track):
 
 def update_orders(user):
     '''
-        Update order objects for user
+        Update order objects for user. Request to kucoin api and get and save in database.
     '''
 
+    # request to kucoin
     status, response = kucoin_api(user.kucoin_key, user.kucoin_secret,
                                   user.kucoin_passphrase, '/api/v1/orders')
 
     if response.get('code') == '200000':
         items = response['data']['items']
 
+        # Save list as objects of Order model
         for item in items:
             Order.objects.update_or_create(
                 user=user, clientOid=item['clientOid'],

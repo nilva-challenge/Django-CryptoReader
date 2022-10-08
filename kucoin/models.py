@@ -3,6 +3,10 @@ from accounts.models import User
 
 
 class Order(models.Model):
+    '''
+        save kucoin orders as objects of Order model
+    '''
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     clientOid = models.CharField(max_length=200)
     side = models.CharField(max_length=200)

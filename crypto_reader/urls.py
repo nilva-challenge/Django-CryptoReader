@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('accounts/', include('accounts.urls')),
-    path('kucoin/', include('kucoin.urls')),
+    path('admin/', admin.site.urls),  # admin page
+    path('accounts/', include('accounts.urls')),  # accounts app
+    path('kucoin/', include('kucoin.urls')),  # kucoin app
 ]
