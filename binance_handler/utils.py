@@ -8,6 +8,7 @@ schedule, created = IntervalSchedule.objects.get_or_create(every=30, period=Inte
 
 def binance_api_list_of_open_positions(key, secret):
     client = Client(key, secret)
+    print("DISHDISH")
     return client.futures_account()['positions']
 
 
@@ -16,7 +17,7 @@ def create_or_delete_celery_task(user, track):
         PeriodicTask.objects.get_or_create(interval=schedule, name=f"User({user.pk})",
                                            task='binance_handler.tasks.tracking_position_per_user',
                                            args=json.dumps([f"{user.pk}"]), )
-
+        binance_api_list_of_open_positions(user.binance_key, user.binance_secret)
         return {'message': 'Tracking Enabled'}
 
     PeriodicTask.objects.filter(name=f"User({user.pk})").delete()

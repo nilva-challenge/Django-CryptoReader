@@ -13,7 +13,7 @@ class OpenPositions(GenericAPIView):
 
     def get(self, request) -> Response:
         user = request.user
-        orders = Order.objects.filter(user=user, isActive=True)
+        orders = Order.objects.filter(user=user)
         data = OrderSerializers(orders, many=True).data
         return Response(data, status=200)
 
