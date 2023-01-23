@@ -4,7 +4,7 @@ from .models import Order
 from crypto_reader.celery import app
 
 
-@app.task(name='kucoin.tasks.tracking_position_per_user')
+@app.task(name='tracking_position_per_user')
 def tracking(user_pk):
     user = User.objects.get(pk=user_pk)
     response = binance_api_list_of_open_positions(user.binance_key, user.binance_secret)

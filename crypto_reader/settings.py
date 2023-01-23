@@ -110,5 +110,5 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CELERY_BROKER_URL = 'redis://default:blR9KZ39lE6cBf8JraZsVtbpU1Bruh3U@redis-18003.c275.us-east-1-4.ec2.cloud.redislabs.com:18003'
-CELERY_RESULT_BACKEND = 'redis://default:blR9KZ39lE6cBf8JraZsVtbpU1Bruh3U@redis-18003.c275.us-east-1-4.ec2.cloud.redislabs.com:18003'
+CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672//'
+CELERY_RESULT_BACKEND = 'db+sqlite:///results.db'
