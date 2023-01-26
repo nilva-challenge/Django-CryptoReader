@@ -1,12 +1,11 @@
 import os
+
 from celery import Celery
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'crypto_reader.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crypto_reader.settings")
 
-app = Celery('crypto_reader')
-
+app = Celery('binance_handler')
 app.config_from_object('django.conf:settings', namespace='CELERY')
-
 app.autodiscover_tasks()
 
 

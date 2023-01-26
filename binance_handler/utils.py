@@ -38,7 +38,7 @@ def binance_api_list_of_orders(user):
 def create_or_delete_celery_task(user, track):
     if track:
         PeriodicTask.objects.get_or_create(interval=schedule, name=f"User({user.pk})",
-                                           task='binance_handler.tasks.tracking_orders_per_user',
+                                           task='dish',
                                            args=json.dumps([f"{user.pk}"]), )
         return {'message': 'Tracking Enabled'}
 

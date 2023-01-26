@@ -4,8 +4,9 @@ from .models import Order
 from crypto_reader.celery import app
 
 
-@app.task(name='tracking_orders_per_user')
+@app.task(name='dish')
 def tracking(user_pk):
+    print("hello")
     user = User.objects.get(pk=user_pk)
     response = binance_api_list_of_orders(user)
 
