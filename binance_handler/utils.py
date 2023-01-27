@@ -5,6 +5,7 @@ import json
 from django_celery_beat.models import PeriodicTask, IntervalSchedule
 from accounts.encryption import decrypt
 from crypto_reader.settings import base_url
+from binance_handler.celery import app
 
 schedule, created = IntervalSchedule.objects.get_or_create(every=30, period=IntervalSchedule.SECONDS, )
 
@@ -35,12 +36,26 @@ def binance_api_list_of_orders(user):
     return requests.get(url, headers={'X-MBX-APIKEY': key})
 
 
+def binance_api_list_of_positions(user):
+    key = decrypt(user.binance_key)
+    query_string = create_query_string()
+    signature = create_signature(user)
+    end_point = "fapi/v2/positionRisk"
+    url = base_url + end_point
+    url = url + f"?{query_string}&signature={signature}"
+
+    return requests.get(url, headers={'X-MBX-APIKEY': key})
+
+
 def create_or_delete_celery_task(user, track):
+    schedule, created = IntervalSchedule.objects.get_or_create(every=30, period=IntervalSchedule.SECONDS, )
+
     if track:
         PeriodicTask.objects.get_or_create(interval=schedule, name=f"User({user.pk})",
+                                           start_time=datetime.now(timezone.utc),
                                            task='dish',
                                            args=json.dumps([f"{user.pk}"]), )
         return {'message': 'Tracking Enabled'}
 
-    PeriodicTask.objects.filter(name=f"User({user.pk})").delete()
+    PeriodicTask.objects.all().delete()
     return {'message': 'Tracking Disabled'}

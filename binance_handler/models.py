@@ -10,3 +10,7 @@ class Order(models.Model):
     type = models.CharField(max_length=200)
     tradeType = models.CharField(max_length=200)
     isActive = models.BooleanField()
+
+
+class Position(Order):
+    open = models.BooleanField()

@@ -1,13 +1,13 @@
 from rest_framework.generics import GenericAPIView
 
-from .serializers import OrderSerializers, TrackSerializers
+from .serializers import OrderSerializers, TrackSerializers, PositionSerializers
 from .utils import create_or_delete_celery_task
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from .models import Order
+from .models import Order, Position
 
 
-class OpenPositions(GenericAPIView):
+class all_orders(GenericAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = OrderSerializers
 
@@ -15,6 +15,17 @@ class OpenPositions(GenericAPIView):
         user = request.user
         orders = Order.objects.filter(user=user)
         data = OrderSerializers(orders, many=True).data
+        return Response(data, status=200)
+
+
+class all_positions(GenericAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = PositionSerializers
+
+    def get(self, request) -> Response:
+        user = request.user
+        positions = Position.objects.filter(user=user)
+        data = PositionSerializers(positions, many=True).data
         return Response(data, status=200)
 
 
