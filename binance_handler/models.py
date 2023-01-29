@@ -14,3 +14,8 @@ class Order(models.Model):
 
 class Position(Order):
     open = models.BooleanField()
+
+
+class Binance_profile(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    total_wallet_balance = models.CharField(max_length=10000)
