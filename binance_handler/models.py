@@ -4,18 +4,30 @@ from accounts.models import User
 
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    clientOid = models.CharField(max_length=200)
     side = models.CharField(max_length=200)
     symbol = models.CharField(max_length=200)
     type = models.CharField(max_length=200)
     tradeType = models.CharField(max_length=200)
-    isActive = models.BooleanField()
+    isActive = models.BooleanField(null=True)
+    time = models.DateTimeField(null=True)
+    # leverage = models.FloatField(null=True)
+    price = models.FloatField(null=True)
 
 
-class Position(Order):
-    open = models.BooleanField()
+class Position(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    symbol = models.CharField(max_length=100, null=True)
+    entryPrice = models.CharField(max_length=100, null=True)
+    leverage = models.IntegerField(null=True)
+    time = models.DateTimeField(null=True)
+    unRealizedProfit = models.FloatField(null=True)
 
 
 class Binance_profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    total_wallet_balance = models.CharField(max_length=10000)
+    BTC_wallet = models.FloatField(default=0)
+    BNB_wallet = models.FloatField(default=0)
+    ETH_wallet = models.FloatField(default=0)
+    USDT_wallet = models.FloatField(default=0)
+    USDC_wallet = models.FloatField(default=0)
+    BUSD_wallet = models.FloatField(default=0)

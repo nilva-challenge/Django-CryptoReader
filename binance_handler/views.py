@@ -35,7 +35,7 @@ class TotalWalletBalance(GenericAPIView):
 
     def get(self, request) -> Response:
         user = request.user
-        total_wallet = Binance_profile.objects.get('total_wallet_balance')
+        total_wallet = Binance_profile.objects.filter(user=user)
         data = BinanceProfileSerializers(total_wallet, many=True).data
         return Response(data, status=200)
 

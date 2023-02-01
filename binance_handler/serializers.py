@@ -12,7 +12,7 @@ class OrderSerializers(serializers.ModelSerializer):
 
 class PositionSerializers(serializers.ModelSerializer):
     class Meta:
-        model: Position
+        model = Position
         fields = '__all__'
 
 
@@ -22,5 +22,5 @@ class TrackSerializers(serializers.Serializer):
 
 class BinanceProfileSerializers(serializers.ModelSerializer):
     class Meta:
-        model: Binance_profile
+        model = Binance_profile
         fields = '__all__'

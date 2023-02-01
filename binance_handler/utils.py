@@ -8,6 +8,9 @@ from crypto_reader.settings import base_url
 
 schedule, created = IntervalSchedule.objects.get_or_create(every=30, period=IntervalSchedule.SECONDS, )
 
+#key = "5009ff8d1413839c0b3af0e097a04a5d26d80f74d3b47939923799cff6439b8d"
+#secret = "2d237c8829b1568504af754d014064c0262060cc3926fa7f07e0f0aca161eb11"
+
 
 def create_query_string():
     now = datetime.now(timezone.utc)
@@ -20,41 +23,42 @@ def create_query_string():
 
 def create_signature(user):
     queryString = create_query_string()
-    signature = hmac.new(user.binance_secret.encode(), queryString.encode(), hashlib.sha256).hexdigest()
+    secret = decrypt(user.binance_secret)
+    signature = hmac.new(secret.encode(), queryString.encode(), hashlib.sha256).hexdigest()
     return signature
 
 
 def binance_api_list_of_orders(user):
-    key = decrypt(user.binance_key)
     query_string = create_query_string()
     signature = create_signature(user)
     end_point = "/fapi/v1/allOrders"
     url = base_url + end_point
     url = url + f"?{query_string}&signature={signature}"
 
-    return requests.get(url, headers={'X-MBX-APIKEY': key})
+    key = decrypt(user.binance_key)
+    return requests.get(url, headers={'X-MBX-APIKEY': key}).json()
 
 
 def binance_api_list_of_positions(user):
-    key = decrypt(user.binance_key)
     query_string = create_query_string()
     signature = create_signature(user)
-    end_point = "/fapi/v2/account"
+    end_point = "/fapi/v2/positionRisk"
     url = base_url + end_point
     url = url + f"?{query_string}&signature={signature}"
-
-    return requests.get(url, headers={'X-MBX-APIKEY': key})
+    key = decrypt(user.binance_key)
+    data = requests.get(url, headers={'X-MBX-APIKEY': key}).json()
+    return data
 
 
 def binance_account_data(user):
-    key = decrypt(user.binance_key)
     query_string = create_query_string()
     signature = create_signature(user)
-    end_point = "/fapi/v2/account"
+    end_point = "/fapi/v2/balance"
     url = base_url + end_point
     url = url + f"?{query_string}&signature={signature}"
-
-    return requests.get(url, headers={'X-MBX-APIKEY': key})
+    key = decrypt(user.binance_key)
+    data = requests.get(url, headers={'X-MBX-APIKEY': key}).json()
+    return data
 
 
 def create_or_delete_celery_task(user, track):
@@ -63,7 +67,7 @@ def create_or_delete_celery_task(user, track):
     if track:
         PeriodicTask.objects.get_or_create(interval=schedule, name=f"User({user.pk})",
                                            start_time=datetime.now(timezone.utc),
-                                           task='traking',
+                                           task='tracking',
                                            args=json.dumps([f"{user.pk}"]), )
         return {'message': 'Tracking Enabled'}
 
