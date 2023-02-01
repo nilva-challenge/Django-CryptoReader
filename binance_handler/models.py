@@ -1,6 +1,11 @@
 from django.db import models
 from accounts.models import User
 
+MARKET_TYPE = (
+    ("features", '1'),
+    ("spot", 2)
+)
+
 
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -12,6 +17,7 @@ class Order(models.Model):
     time = models.DateTimeField(null=True)
     # leverage = models.FloatField(null=True)
     price = models.FloatField(null=True)
+    market_type = models.CharField(choices=MARKET_TYPE, max_length=10, null=True)
 
 
 class Position(models.Model):
@@ -21,10 +27,12 @@ class Position(models.Model):
     leverage = models.IntegerField(null=True)
     time = models.DateTimeField(null=True)
     unRealizedProfit = models.FloatField(null=True)
+    market_type = models.CharField(choices=MARKET_TYPE, max_length=10, null=True)
 
 
 class Binance_profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    market_type = models.CharField(choices=MARKET_TYPE, max_length=10, null=True)
     BTC_wallet = models.FloatField(default=0)
     BNB_wallet = models.FloatField(default=0)
     ETH_wallet = models.FloatField(default=0)

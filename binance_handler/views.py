@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from .models import Order, Position, Binance_profile
 
 
-class all_orders(GenericAPIView):
+class current_orders(GenericAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = OrderSerializers
 
@@ -18,7 +18,7 @@ class all_orders(GenericAPIView):
         return Response(data, status=200)
 
 
-class all_positions(GenericAPIView):
+class current_positions(GenericAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = PositionSerializers
 

@@ -108,7 +108,8 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-base_url = "https://testnet.binancefuture.com"
+features_base_url = "https://testnet.binancefuture.com"
+spot_base_url = "https://testnet.binance.vision"
 
 CELERY_BROKER_URL = 'redis://localhost:6379'
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL

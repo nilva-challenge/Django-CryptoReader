@@ -4,12 +4,13 @@ import requests
 import json
 from django_celery_beat.models import PeriodicTask, IntervalSchedule
 from accounts.encryption import decrypt
-from crypto_reader.settings import base_url
+from crypto_reader.settings import features_base_url, spot_base_url
 
 schedule, created = IntervalSchedule.objects.get_or_create(every=30, period=IntervalSchedule.SECONDS, )
 
-#key = "5009ff8d1413839c0b3af0e097a04a5d26d80f74d3b47939923799cff6439b8d"
-#secret = "2d237c8829b1568504af754d014064c0262060cc3926fa7f07e0f0aca161eb11"
+
+# key = "5009ff8d1413839c0b3af0e097a04a5d26d80f74d3b47939923799cff6439b8d"
+# secret = "2d237c8829b1568504af754d014064c0262060cc3926fa7f07e0f0aca161eb11"
 
 
 def create_query_string():
@@ -28,33 +29,66 @@ def create_signature(user):
     return signature
 
 
-def binance_api_list_of_orders(user):
+def features_binance_api_list_of_orders(user):
     query_string = create_query_string()
     signature = create_signature(user)
-    end_point = "/fapi/v1/allOrders"
-    url = base_url + end_point
+    end_point = "/fapi/v1/openOrders"
+    url = features_base_url + end_point
     url = url + f"?{query_string}&signature={signature}"
 
     key = decrypt(user.binance_key)
     return requests.get(url, headers={'X-MBX-APIKEY': key}).json()
 
 
-def binance_api_list_of_positions(user):
+def features_binance_api_list_of_positions(user):
     query_string = create_query_string()
     signature = create_signature(user)
     end_point = "/fapi/v2/positionRisk"
-    url = base_url + end_point
+    url = features_base_url + end_point
     url = url + f"?{query_string}&signature={signature}"
     key = decrypt(user.binance_key)
     data = requests.get(url, headers={'X-MBX-APIKEY': key}).json()
     return data
 
 
-def binance_account_data(user):
+def features_binance_account_data(user):
     query_string = create_query_string()
     signature = create_signature(user)
     end_point = "/fapi/v2/balance"
-    url = base_url + end_point
+    url = features_base_url + end_point
+    url = url + f"?{query_string}&signature={signature}"
+    key = decrypt(user.binance_key)
+    data = requests.get(url, headers={'X-MBX-APIKEY': key}).json()
+    return data
+
+
+def spot_binance_api_list_of_orders(user):
+    query_string = create_query_string()
+    signature = create_signature(user)
+    end_point = "/sapi/v1/openOrders"
+    url = spot_base_url + end_point
+    url = url + f"?{query_string}&signature={signature}"
+
+    key = decrypt(user.binance_key)
+    return requests.get(url, headers={'X-MBX-APIKEY': key}).json()
+
+
+def spot_binance_api_list_of_positions(user):
+    query_string = create_query_string()
+    signature = create_signature(user)
+    end_point = "/sapi/v2/positionRisk"
+    url = spot_base_url + end_point
+    url = url + f"?{query_string}&signature={signature}"
+    key = decrypt(user.binance_key)
+    data = requests.get(url, headers={'X-MBX-APIKEY': key}).json()
+    return data
+
+
+def spot_binance_account_data(user):
+    query_string = create_query_string()
+    signature = create_signature(user)
+    end_point = "/sapi/v2/balance"
+    url = spot_base_url + end_point
     url = url + f"?{query_string}&signature={signature}"
     key = decrypt(user.binance_key)
     data = requests.get(url, headers={'X-MBX-APIKEY': key}).json()
