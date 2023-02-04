@@ -4,8 +4,8 @@ import requests
 import json
 
 spot_base_url = "https://testnet.binance.vision"
-key = "rtesypEYwMiiSAeeiWRoYik7vSp66lUprbKoD788Z6vvSQNqj4EVXHNvtU0Xqsfi"
-secret = "rLtP7i2JNmYEouOfj84kLO9V3esiuUojLq7DA2fHBxlQkBIK12H89I4OR6xFeUgz"
+key = "VWYU5oZL950Wshm8VPLSYyFh5tlqEtMvWbbHYWipQdOVSCzV62RH2N2Z7dVzAUEq"
+secret = "JK2IWqNsHxaimzbIN1GO8w2LzeWcC9A2qQrGQo2bBEH2SJ63MHJSStNly7iTJN7X"
 
 
 def create_query_string():
@@ -26,10 +26,11 @@ def create_signature():
 def features_binance_account_data():
     query_string = create_query_string()
     signature = create_signature()
-    end_point = "/fapi/v2/balance"
+    end_point = "/sapi/v1/capital/config/getall"
     url = spot_base_url + end_point
     url = url + f"?{query_string}&signature={signature}"
-    data = requests.get(url, headers={'X-MBX-APIKEY': key}).json()
-    return data
+    print(url)
+    data = requests.get(url, headers={'X-MBX-APIKEY': key})
+    return data.status_code
 
 print(features_binance_account_data())
