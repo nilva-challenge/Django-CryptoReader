@@ -1,3 +1,5 @@
+import deepdiff as deepdiff
+
 from .utils import features_binance_api_list_of_orders, features_binance_api_list_of_positions, \
     features_binance_account_data, spot_binance_api_list_of_positions, spot_binance_api_list_of_orders, \
     spot_binance_account_data
@@ -13,10 +15,6 @@ def tracking(user_pk):
     response_for_features_orders = features_binance_api_list_of_orders(user)
     response_for_features_positions = features_binance_api_list_of_positions(user)
     response_for_features_profile = features_binance_account_data(user)
-
-    response_for_spot_orders = spot_binance_api_list_of_orders(user)
-    response_for_spot_positions = spot_binance_api_list_of_positions(user)
-    response_for_spot_profile = features_binance_account_data(user)
 
     open_orders_list = []
     for item in response_for_features_orders:
@@ -72,11 +70,18 @@ def tracking(user_pk):
 
         open_positions_list.append(open_positions_dict)
 
-        for obj in Position.objects.all().values():
-            del obj["id"]
-            del obj["time"]
-            if obj not in open_positions_list:
-                Position.objects.filter(**obj).delete()
+    print("hello")
+
+    for obj in Position.objects.all().values():
+        del obj["id"]
+        del obj["time"]
+        del obj["unRealizedProfit"]
+        print("obj is:")
+        print(obj)
+        print("list is:")
+        print(open_positions_list)
+        if obj not in open_positions_list:
+            Position.objects.filter(**obj).delete()
 
     for item in response_for_features_profile:
         profile = Binance_profile.objects.filter(user=user)
@@ -117,4 +122,3 @@ def tracking(user_pk):
                 profile.update(BUSD_wallet=item['balance'])
             else:
                 Binance_profile.objects.create(user=user, BUSD_wallet=item['balance'])
-

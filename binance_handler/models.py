@@ -24,7 +24,7 @@ class Position(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     symbol = models.CharField(max_length=100, null=True)
     entryPrice = models.CharField(max_length=100, null=True)
-    leverage = models.IntegerField(null=True)
+    leverage = models.CharField(null=True, max_length=100)
     time = models.DateTimeField(null=True)
     unRealizedProfit = models.FloatField(null=True)
     market_type = models.CharField(choices=MARKET_TYPE, max_length=10, null=True)
