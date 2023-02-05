@@ -13,12 +13,13 @@ def create_query_string():
     epoch = datetime(1970, 1, 1, tzinfo=timezone.utc)
     posix_timestamp_micros = (now - epoch) // timedelta(microseconds=1)
     posix_timestamp_millis = posix_timestamp_micros // 1000
-    queryString = "&timestamp=" + str(posix_timestamp_millis)
+    queryString = "&timestamp=" + str(posix_timestamp_millis) + "&symbol=BTC"
     return queryString
 
 
 def create_signature():
     queryString = create_query_string()
+    print(secret)
     signature = hmac.new(secret.encode(), queryString.encode(), hashlib.sha256).hexdigest()
     return signature
 
@@ -26,11 +27,10 @@ def create_signature():
 def features_binance_account_data():
     query_string = create_query_string()
     signature = create_signature()
-    end_point = "/sapi/v1/capital/config/getall"
+    end_point = "/sapi/v1/sub-account/list"
     url = spot_base_url + end_point
     url = url + f"?{query_string}&signature={signature}"
-    print(url)
-    data = requests.get(url, headers={'X-MBX-APIKEY': key})
-    return data.status_code
+    return requests.get(url, headers={'X-MBX-APIKEY': key}).content
+
 
 print(features_binance_account_data())
