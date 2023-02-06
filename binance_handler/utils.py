@@ -76,7 +76,7 @@ def spot_binance_api_list_of_orders(user):
 def spot_binance_api_list_of_positions(user):
     query_string = create_query_string()
     signature = create_signature(user)
-    end_point = "/sapi/v2/positionRisk"
+    end_point = "/sapi/v1/capital/config/getall"
     url = spot_base_url + end_point
     url = url + f"?{query_string}&signature={signature}"
     key = decrypt(user.binance_key)
