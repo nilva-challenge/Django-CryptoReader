@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('binance_handler', '0009_remove_binance_profile_total_wallet'),
+        ('binance_helper', '0009_remove_binance_profile_total_wallet'),
     ]
 
     operations = [

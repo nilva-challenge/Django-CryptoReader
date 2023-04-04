@@ -1,7 +1,7 @@
 from abc import ABC
 
 from rest_framework import serializers
-from .models import Order, Position, Binance_profile
+from .models import Order, Position, Wallet
 
 
 class OrderSerializers(serializers.ModelSerializer):
@@ -22,5 +22,5 @@ class TrackSerializers(serializers.Serializer):
 
 class BinanceProfileSerializers(serializers.ModelSerializer):
     class Meta:
-        model = Binance_profile
+        model = Wallet
         fields = '__all__'

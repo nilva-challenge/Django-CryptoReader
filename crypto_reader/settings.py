@@ -28,7 +28,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'django_celery_beat',
     'accounts',
-    'binance_handler'
+    'binance_helper',
+    'kocoin'
 ]
 
 REST_FRAMEWORK = {
@@ -108,8 +109,8 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-features_base_url = "https://testnet.binancefuture.com"
-spot_base_url = "https://testnet.binance.vision"
+FUTURE_BASE_URL = "https://testnet.binancefuture.com"
+SPOT_BASE_URL = "https://testnet.binance.vision"
 
 CELERY_BROKER_URL = 'redis://localhost:6379'
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL
@@ -118,4 +119,5 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_DEFAULT_QUEUE = 'default'
-#CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+CELERY_PERIOD_TIME = 30
+# CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'

@@ -9,20 +9,26 @@ from .encryption import encrypt, decrypt
 signer = Signer()
 
 
+def api_decryption(key, secret) -> tuple:
+    return decrypt(key), decrypt(secret)
+
+
+def api_encryption(key, secret) -> tuple:
+    return encrypt(key), encrypt(secret)
+
+
 class UserManager(BaseUserManager):
-    def encryption(self, key, secret) -> tuple:
-        return encrypt(key), encrypt(secret)
 
-    def create_user(self, name, username, binance_key, binance_secret, password=None):
-
+    def create_user(self, name, username, api_future_key, api_future_secret, api_spot_key, api_spot_secret, password=None):
         now = timezone.now()
 
-        binance_key, binance_secret = self.encryption(binance_key, binance_secret)
+        api_spot_key, api_spot_secret = api_encryption(api_spot_key, api_spot_secret)
+        api_features_key, api_features_secret = api_encryption(api_future_key, api_future_secret)
 
         user = self.model(
-            name=name, username=username, binance_key=binance_key, binance_secret=binance_secret,
-            is_staff=False, is_active=True, is_superuser=False, date_joined=now,
-            last_login=now,)
+            name=name, username=username, api_future_key=api_features_key, api_future_secret=api_future_secret,
+            api_spot_key=api_spot_key, api_spot_secret=api_spot_secret, is_staff=False, is_active=True, is_superuser=False,
+            date_joined=now)
         user.set_password(password)
         user.save(using=self._db)
 
@@ -40,10 +46,11 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractUser):
-
     name = models.CharField(_("name"), max_length=150)
-    binance_key = models.CharField(max_length=200)
-    binance_secret = models.CharField(max_length=200)
+    api_future_key = models.CharField(max_length=150, null=True)
+    api_future_secret = models.CharField(max_length=150, null=True)
+    api_spot_key = models.CharField(max_length=150, null=True)
+    api_spot_secret = models.CharField(max_length=150, null=True)
 
     objects = UserManager()
 
@@ -51,6 +58,3 @@ class User(AbstractUser):
 
     def __str__(self) -> str:
         return self.username
-
-    def decryption(self, key, secret) -> tuple:
-        return decrypt(key),  decrypt(secret)

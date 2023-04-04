@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('binance_handler', '0001_initial'),
+        ('binance_helper', '0001_initial'),
     ]
 
     operations = [
