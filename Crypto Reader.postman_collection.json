@@ -1,0 +1,241 @@
+{
+	"info": {
+		"_postman_id": "37e4c9c9-4bba-414a-ac61-2f07fc4cfbf0",
+		"name": "Crypto Reader",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10219869"
+	},
+	"item": [
+		{
+			"name": "Accounts",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "re_password",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "kc_pp",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "kc_apikey",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "kc_secret",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "security_passphrase",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{local}}/api/auth/register",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{local}}/api/auth/login",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Core",
+			"item": [
+				{
+					"name": "User Orders",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "symbol",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "side",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "type",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "tradeType",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "startAt",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "endAt",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "security_pass_phrase",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "status",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{local}}/api/orders",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"api",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Enable Disable Auto Update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjU4ODc4MjQ3LCJpYXQiOjE2NTg3OTE4NDcsImp0aSI6IjA2MDNlNzViNDlmMjRhNmM4MDIzZWNhZmUzNjU5OWQwIiwidXNlcl9pZCI6IjdkOGM5Mjk3LTRiNjYtNDE0Yy04ZGUyLTg2YzI2ZTM2ZTdkZiJ9.fygg6SFIi85R5_GsXZQKR7h581KZWUqbDpRLllCKOAs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{local}}/api/auto_updater",
+							"host": [
+								"{{local}}"
+							],
+							"path": [
+								"api",
+								"auto_updater"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "local",
+			"value": "localhost",
+			"type": "string"
+		}
+	]
+}

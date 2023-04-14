@@ -1,0 +1,15 @@
+Django==3.2.8
+django-cors-headers
+djangorestframework
+djangorestframework-simplejwt
+gunicorn
+Markdown
+python-decouple
+redis>=3.5
+celery>=5.0
+django-celery-beat
+supervisor
+psycopg2-binary
+cryptography>=3.3.1
+django-redis
+drf-yasg
