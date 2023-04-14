@@ -8,6 +8,7 @@ The application you develop must have these features:
 - Users should be able to **sign in**.
 - Users should be able to **request position tracking**.
 - Users should be able to **see list** of current open positions.
+- Current positions must be cached. **The cache should be in redis and must have a fallback to database if redis was down.**
 - Application should be able to track user's positions every 30 seconds.
 - Application should be able to handle multi users.
 - Application must be able to resume its job after restart.
