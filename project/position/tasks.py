@@ -18,6 +18,7 @@ from datetime import timedelta
 class Utility:
     camel_pat = re.compile(r'([A-Z])')
     under_pat = re.compile(r'_([a-z])')
+    serializer = None
     serializer = TrackingPositionSerializer
 
     symbol_name: str = 'XBTUSDM'
@@ -73,8 +74,7 @@ class Utility:
 @shared_task
 def tracking_task(user, context):
     print("Tracking task---------> START")
-    obj = Utility(user=user, context=context)
-    # pprint.pprint(obj.data)
+    Utility(user=user, context=context)
     print("Tracking task---------> Done")
 
 # if __name__ == '__main__':
