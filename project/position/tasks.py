@@ -7,54 +7,41 @@ import hashlib
 import base64
 from dataclasses import dataclass
 import pprint
+from .serializers import TrackingPositionSerializer
+from celery import shared_task
+
 from django.core.cache import cache
 from datetime import timedelta
 
-
-# from django.contrib.auth import get_user_model
-#
-# User = get_user_model()
-
-
-# from celery import shared_task
-
-#
-# # @shared_task
-# def track_positions(user_id):
-#     # get user details from the database
-#     user = CustomUser.objects.get(id=user_id)
-#
-#     # connect to KuCoin API
-#     client = kucoin.client.User(api_key=user.kucoin_api_key, api_secret=user.kucoin_api_secret)
-#
-#     # track positions every 30 seconds
-#     while True:
-#         # get open positions
-#         positions = client.get_open_positions()
-#
-#         # update cache with positions data
-#         cache_key = f'user_{user_id}_positions'
-#         cache.set(cache_key, positions, timeout=timedelta(seconds=30))
-#
-#         # sleep for 30 seconds
-#         time.sleep(30)
 
 @dataclass
 class Utility:
     camel_pat = re.compile(r'([A-Z])')
     under_pat = re.compile(r'_([a-z])')
+    serializer = TrackingPositionSerializer
 
+    symbol_name: str = 'XBTUSDM'
+    context: dict = None
     api_key: str = None
     api_secret: str = None
     api_passphrase: str = None
-    user: object = None
+    user: dict = None
     output: dict = None
+    data: dict = None
 
     def __post_init__(self):
-        self.api_key = self.api_key or self.user.kucoin_api_key
-        self.api_secret = self.api_secret or self.user.kucoin_api_secret
-        self.api_passphrase = self.api_passphrase or self.user.kucoin_passphrase
+        self.api_key = self.api_key or self.user.get('kucoin_api_key')
+        self.api_secret = self.api_secret or self.user.get('kucoin_api_secret')
+        self.api_passphrase = self.api_passphrase or self.user.get('kucoin_passphrase')
         self.output = self.get_positions()
+        #
+        self.data = self.serializing_output()
+
+    def serializing_output(self):
+        s = self.serializer(data=self.output, context=self.context)
+        s.is_valid(raise_exception=True)
+        s.save()
+        return s.data
 
     def _camel_to_underscore(self, name: str) -> str:
         return self.camel_pat.sub(lambda x: '_' + x.group(1).lower(), name)
@@ -63,9 +50,9 @@ class Utility:
         return {self._camel_to_underscore(k): v for k, v in data.items()}
 
     def get_positions(self) -> dict:
-        url = 'https://api-futures.kucoin.com/api/v1/position?symbol=XBTUSDM'
+        url = f'https://api-futures.kucoin.com/api/v1/position?symbol={self.symbol_name}'
         now = int(time.time() * 1000)
-        str_to_sign = str(now) + 'GET' + '/api/v1/position?symbol=XBTUSDM'
+        str_to_sign = str(now) + 'GET' + f'/api/v1/position?symbol={self.symbol_name}'
         signature = base64.b64encode(
             hmac.new(self.api_secret.encode('utf-8'), str_to_sign.encode('utf-8'), hashlib.sha256).digest())
         passphrase = base64.b64encode(
@@ -79,14 +66,21 @@ class Utility:
         }
         response = requests.request('get', url, headers=headers)
         pprint.pprint(response.status_code)
-        pprint.pprint(response.json())
+        # pprint.pprint(response.json())
         return self._internal_value(data=response.json()['data'])
 
 
-if __name__ == '__main__':
-    output = Utility(api_key="643ac410317fa70001647b44",
-                     api_secret="ffe1e63c-1467-405b-99d4-6c59b491755c",
-                     api_passphrase="9219474").output
-    pprint.pprint(output)
-    #
-    # print({camel_to_underscore(k): v for k, v in data.items()})
+@shared_task
+def tracking_task(user, context):
+    print("Tracking task---------> START")
+    obj = Utility(user=user, context=context)
+    # pprint.pprint(obj.data)
+    print("Tracking task---------> Done")
+
+# if __name__ == '__main__':
+#     output = Utility(api_key="643ac410317fa70001647b44",
+#                      api_secret="ffe1e63c-1467-405b-99d4-6c59b491755c",
+#                      api_passphrase="9219474").output
+#     pprint.pprint(output)
+#     #
+#     # print({camel_to_underscore(k): v for k, v in data.items()})

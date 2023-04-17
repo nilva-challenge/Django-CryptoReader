@@ -10,5 +10,5 @@ class UserCreateSerializer(BaseUserCreateSerializer):
 
 class UserSerializer(BaseUserSerializer):
     class Meta(BaseUserSerializer.Meta):
-        fields = ['id', 'first_name', 'last_name', 'username',
+        fields = ['id', 'first_name', 'last_name', 'username','email',
                   'kucoin_api_key', 'kucoin_api_secret', 'kucoin_passphrase']
