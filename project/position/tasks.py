@@ -12,7 +12,7 @@ from .serializers import TrackingPositionSerializer
 from celery import shared_task
 
 from django.core.cache import cache
-from datetime import timedelta
+
 
 
 @dataclass
@@ -87,22 +87,25 @@ class Utility:
 
         res = response.json()
         data = res.get('data')
-        if data is not None:
+        if data:
             return self._internal_value(data=data)
         else:
             print(res)
             return None
 
-# @shared_task
-# def tracking_task(user, context):
-#     print("Tracking task---------> START")
-#     Utility(user=user, context=context)
-#     print("Tracking task---------> Done")
+@shared_task
+def tracking_task(user, context):
+    print("Tracking task---------> START")
+    Utility(user=user, context=context)
+    print("Tracking task---------> Done")
 
-if __name__ == '__main__':
-    output = Utility(api_key="643ac410317fa70001647b44",
-                     api_secret="ffe1e63c-1467-405b-99d4-6c59b491755c",
-                     api_passphrase="9219474").output
-    pprint.pprint(output)
+# if __name__ == '__main__':
+    # output = Utility(api_key="643ac410317fa70001647b44",
+    #                  api_secret="ffe1e63c-1467-405b-99d4-6c59b491755c",
+    #                  api_passphrase="9219474").output
+    # output = Utility(api_key="643e5c90d3b4b7000149c88c",
+    #                  api_secret="2e03da19-254e-4556-8055-553c62b4d44c",
+    #                  api_passphrase="9219474").output
+    # pprint.pprint(output)
     #
 #     # print({camel_to_underscore(k): v for k, v in data.items()})
