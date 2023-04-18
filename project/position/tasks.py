@@ -10,10 +10,9 @@ import json
 import pprint
 from .serializers import TrackingPositionSerializer
 from celery import shared_task
+from datetime import timedelta
 
-from django.core.cache import cache
-
-
+from django_redis import get_redis_connection
 
 @dataclass
 class Utility:
@@ -21,6 +20,7 @@ class Utility:
     under_pat = re.compile(r'_([a-z])')
     serializer = TrackingPositionSerializer
 
+    redis_conn: object
     symbol_name: str = 'XBTUSDM'  # or 'XBTUSDT'
     context: dict = None
     api_key: str = None
@@ -31,6 +31,8 @@ class Utility:
     data: dict = None
 
     def __post_init__(self):
+        # self.redis_client = redis.Redis(host='127.0.0.1', port=6379, db=1)
+
         self.api_key = self.api_key or self.user.get('kucoin_api_key')
         self.api_secret = self.api_secret or self.user.get('kucoin_api_secret')
         self.api_passphrase = self.api_passphrase or self.user.get('kucoin_passphrase')
@@ -39,9 +41,10 @@ class Utility:
         self._validated_data = self.serializing_output()
 
     def _set_cache(self) -> None:
-        if self._validated_data:
+        if self.output:
             _user_id = self.context.get("user_id")
-            cache.set(f'cache_key_{_user_id}', json.dumps(self.output), timeout=300)
+            self.redis_conn.set(f'cache_key_{_user_id}', json.dumps(self.output))
+            self.redis_conn.expire('my_key', timedelta(seconds=300))
 
     def serializing_output(self):
         if self.output is not None:
@@ -49,7 +52,7 @@ class Utility:
             s.is_valid(raise_exception=True)
             s.save()
 
-            # self._set_cache()
+            self._set_cache()
             return s.data
         return None
 
@@ -93,19 +96,21 @@ class Utility:
             print(res)
             return None
 
+
 @shared_task
 def tracking_task(user, context):
+    redis_conn = get_redis_connection("default")
     print("Tracking task---------> START")
-    Utility(user=user, context=context)
+    Utility(user=user, context=context, redis_conn=redis_conn)
     print("Tracking task---------> Done")
 
 # if __name__ == '__main__':
-    # output = Utility(api_key="643ac410317fa70001647b44",
-    #                  api_secret="ffe1e63c-1467-405b-99d4-6c59b491755c",
-    #                  api_passphrase="9219474").output
-    # output = Utility(api_key="643e5c90d3b4b7000149c88c",
-    #                  api_secret="2e03da19-254e-4556-8055-553c62b4d44c",
-    #                  api_passphrase="9219474").output
-    # pprint.pprint(output)
-    #
+# output = Utility(api_key="643ac410317fa70001647b44",
+#                  api_secret="ffe1e63c-1467-405b-99d4-6c59b491755c",
+#                  api_passphrase="9219474").output
+# output = Utility(api_key="643e5c90d3b4b7000149c88c",
+#                  api_secret="2e03da19-254e-4556-8055-553c62b4d44c",
+#                  api_passphrase="9219474").output
+# pprint.pprint(output)
+#
 #     # print({camel_to_underscore(k): v for k, v in data.items()})

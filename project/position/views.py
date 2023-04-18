@@ -4,10 +4,15 @@ from rest_framework.views import APIView
 from .models import Position
 from .serializers import PositionSerializer, TrackingPositionSerializer
 from django_celery_beat.models import PeriodicTask, IntervalSchedule
-from django.core.cache import cache
+# from django.core.cache import cache
+# from django.core.cache import cache
+
+# from django_redis.cache import cache
 from rest_framework import status
 from datetime import datetime, timedelta
 import json
+
+from django_redis import get_redis_connection
 
 
 class PositionTrackingView(APIView):
@@ -22,7 +27,7 @@ class PositionTrackingView(APIView):
 
         my_app_name = 'position'
         schedule, created = IntervalSchedule.objects.get_or_create(
-            every=10,
+            every=30,
             period=IntervalSchedule.SECONDS,
         )
         try:
@@ -44,12 +49,17 @@ class OpenPositionsView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        self._get_redis_conn()
         user = request.user
         # Check if the data is already cached
-        cached_data = cache.get(f'cache_key_{user.id}')
+
+        cached_data = self.redis_conn.get(f'cache_key_{user.id}')
         if cached_data:
             return Response(cached_data)
 
         positions = Position.objects.filter(user=user).order_by('created_at')
         serializer = PositionSerializer(positions, many=True)
         return Response(serializer.data)
+
+    def _get_redis_conn(self):
+        self.redis_conn = get_redis_connection("default")
