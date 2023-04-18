@@ -93,7 +93,6 @@ class Utility:
             print(res)
             return None
 
-
 @shared_task
 def tracking_task(user, context):
     redis_conn = get_redis_connection("default")
