@@ -4,10 +4,6 @@ from rest_framework.views import APIView
 from .models import Position
 from .serializers import PositionSerializer, TrackingPositionSerializer
 from django_celery_beat.models import PeriodicTask, IntervalSchedule
-# from django.core.cache import cache
-# from django.core.cache import cache
-
-# from django_redis.cache import cache
 from rest_framework import status
 from datetime import datetime, timedelta
 import json
@@ -36,7 +32,7 @@ class PositionTrackingView(APIView):
                 name=f'{user.id}_{symbol_name}',  # simply describes this periodic task. (unique)
                 task=f'{my_app_name}.tasks.tracking_task',  # name of task.
                 kwargs=json.dumps(dict(user=user_kucoin_secret_items, context={'user_id': user.pk})),
-                expires=datetime.utcnow() + timedelta(seconds=3600*24*10)  # expire time
+                expires=datetime.utcnow() + timedelta(days=100)  # expire time
             )
         except Exception as err:
             return Response({"message": f"Maybe you already set up tracking for symbol = {symbol_name}"},
@@ -47,19 +43,30 @@ class PositionTrackingView(APIView):
 
 class OpenPositionsView(APIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = PositionSerializer
 
     def get(self, request):
-        self._get_redis_conn()
         user = request.user
         # Check if the data is already cached
-
-        cached_data = self.redis_conn.get(f'cache_key_{user.id}')
+        cached_data = self.get_results_from_redis(user=user)
         if cached_data:
-            return Response(cached_data)
+            serializer = self.serializer_class(data=json.loads(cached_data))
+            if serializer.is_valid():
+                return Response(serializer.data)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+        # Fetch data from database.
         positions = Position.objects.filter(user=user).order_by('created_at')
-        serializer = PositionSerializer(positions, many=True)
+        serializer = self.serializer_class(positions, many=True)
         return Response(serializer.data)
 
-    def _get_redis_conn(self):
-        self.redis_conn = get_redis_connection("default")
+    def get_results_from_redis(self, user):
+        result = None
+        try:
+            self.redis_conn = get_redis_connection("default")
+            result = self.redis_conn.get(f'cache_key_{user.id}')
+        except Exception as e:
+            # Logger exception
+            pass
+        return result

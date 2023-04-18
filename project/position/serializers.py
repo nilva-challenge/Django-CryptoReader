@@ -4,14 +4,16 @@ from .models import Position
 
 
 class PositionSerializer(serializers.ModelSerializer):
-    user_id = serializers.IntegerField()
-
+    # user_id = serializers.IntegerField()
+    #
+    # class Meta:
+    #     model = Position
+    #     fields = '__all__'
+    #     # exclude = ('user',)
+    #     read_only_fields = ('symbol', 'created_at', 'mark_price', 'mark_value', 'rist_limit')
     class Meta:
         model = Position
-        fields = '__all__'
-        # exclude = ('user',)
-        read_only_fields = ('symbol', 'created_at', 'mark_price', 'mark_value', 'rist_limit')
-
+        fields = ('symbol', 'created_at', 'mark_price', 'mark_value', 'risk_limit')
 
 class TrackingPositionSerializer(serializers.ModelSerializer):
 

@@ -1,4 +1,3 @@
-# tasks.py
 import re
 import requests
 import time
@@ -31,8 +30,6 @@ class Utility:
     data: dict = None
 
     def __post_init__(self):
-        # self.redis_client = redis.Redis(host='127.0.0.1', port=6379, db=1)
-
         self.api_key = self.api_key or self.user.get('kucoin_api_key')
         self.api_secret = self.api_secret or self.user.get('kucoin_api_secret')
         self.api_passphrase = self.api_passphrase or self.user.get('kucoin_passphrase')
@@ -44,7 +41,7 @@ class Utility:
         if self.output:
             _user_id = self.context.get("user_id")
             self.redis_conn.set(f'cache_key_{_user_id}', json.dumps(self.output))
-            self.redis_conn.expire('my_key', timedelta(seconds=300))
+            self.redis_conn.expire(f'cache_key_{_user_id}', timedelta(seconds=25))
 
     def serializing_output(self):
         if self.output is not None:
