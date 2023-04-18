@@ -1,11 +1,10 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from .models import Position
 from .serializers import PositionSerializer, TrackingPositionSerializer
 from django_celery_beat.models import PeriodicTask, IntervalSchedule
-
+from django.core.cache import cache
 from rest_framework import status
 from datetime import datetime, timedelta
 import json
@@ -32,11 +31,12 @@ class PositionTrackingView(APIView):
                 name=f'{user.id}_{symbol_name}',  # simply describes this periodic task. (unique)
                 task=f'{my_app_name}.tasks.tracking_task',  # name of task.
                 kwargs=json.dumps(dict(user=user_kucoin_secret_items, context={'user_id': user.pk})),
-                expires=datetime.utcnow() + timedelta(seconds=3600)  # expire time
+                expires=datetime.utcnow() + timedelta(seconds=3600*24*10)  # expire time
             )
         except Exception as err:
             return Response({"message": f"Maybe you already set up tracking for symbol = {symbol_name}"},
                             status=status.HTTP_409_CONFLICT)
+
         return Response({'message': f'Position tracking started symbol {symbol_name}'}, status=status.HTTP_201_CREATED)
 
 
@@ -45,6 +45,11 @@ class OpenPositionsView(APIView):
 
     def get(self, request):
         user = request.user
+        # Check if the data is already cached
+        cached_data = cache.get(f'cache_key_{user.id}')
+        if cached_data:
+            return Response(cached_data)
+
         positions = Position.objects.filter(user=user).order_by('created_at')
         serializer = PositionSerializer(positions, many=True)
         return Response(serializer.data)
