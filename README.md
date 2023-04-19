@@ -29,3 +29,39 @@ We want a clean, readable and maintainable code with meaningful comments and doc
 3. Push your code to your repository
 4. Send us a pull request, we will review and get back to you
 5. Enjoy 
+
+#----------------------------------------------------------------
+# All functions which have been performed in the system 
+- User is able to sign up , sign in, request to track position(per symbol)
+- Authentication has been implemented (JWT token)
+- User is able to see list of positions (cache system is applied)
+- KuCoin api key & secrets are stored in encrypted format
+- The system can handle multiuser requests for tracking
+- Swagger has been provided in `/docs` endpoint
+- pagination is provided in `/positions` endpoint
+- All endpoints must be set **access token** in head as **Authorization** with prefix JWT except for `auth/user`
+## All dependencies
+- Redis has been applied as message broker and cache system
+- Celery has been applied as  task queue
+- MySQL or Sqlite has been applied as database (default database is `MySQL`)
+## Installation
+- activate virtualenv
+- install all python requirments by `pip install -r requirements.txt`
+- migrate database through `python manage.py migrate`
+-  **check the following fields** in settings.py
+1) `CELERY_BROKER_URL`
+2) `CELERY_RESULT_BACKEND`
+3) `CELERY_TASK_SERIALIZER`
+4) `CELERY_RESULT_SERIALIZER`
+5) `CELERY_ACCEPT_CONTENT`
+6) `CELERY_BEAT_SCHEDULER ,CACHES ,EXPIRE_TIME`
+7) `TARGET_SCHEDULE_APP_NAME, INTERVAL`
+
+- Change the database backend in setting.py
+- Ensure that the database and redis are installed and available.
+- Run these commands in separate shells in the same python virtualenv.
+1) `celery -A position beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler`
+2) `celery -A position worker -l info -P gevent`
+3) in development mode (`python manage.py runserver`), but you are able to use gunicorne or uwsgi
+## Admin Panel
+- If you register as superuser can access the `PERIODIC TASK`, it allows you to enable or disable every task whatever you want.
