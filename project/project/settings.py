@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'core',
     'position',
     'django_celery_beat',
-
+    'rest_framework_swagger',
 ]
 
 MIDDLEWARE = [
