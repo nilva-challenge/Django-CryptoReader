@@ -43,7 +43,7 @@ We want a clean, readable and maintainable code with meaningful comments and doc
 ## All dependencies
 - Redis has been applied as message broker and cache system
 - Celery has been applied as  task queue
-- MySQL or Sqlite has been applied as database
+- MySQL or Sqlite has been applied as database (default database is `MySQL`)
 ## Installation
 - activate virtualenv
 - install all python requirments by `pip install -r requirements.txt`
