@@ -34,10 +34,10 @@ urlpatterns = [
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.jwt')),
 
+    # Debug Tools endpoints (just for development) (it can be removed with peace of mind)
     path('__debug__/', include('debug_toolbar.urls')),
-    ###
-    # path('swagger/', schema_view),
 
+    # swagger endpoints
     path('docs/', TemplateView.as_view(
         template_name='docs.html',
         extra_context={'schema_url': 'api_schema'}

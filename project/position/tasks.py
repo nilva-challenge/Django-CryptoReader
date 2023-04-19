@@ -16,18 +16,22 @@ from django_redis import get_redis_connection
 
 @dataclass
 class Utility:
+    """
+    This class implements some functionalities that can be used in
+    tracking task in tracking_task function and caching
+    """
     camel_pat = re.compile(r'([A-Z])')
-    under_pat = re.compile(r'_([a-z])')
     serializer = TrackingPositionSerializer
+    domain = 'https://api-futures.kucoin.com'
 
     redis_conn: object
-    symbol_name: str = 'XBTUSDM'  # or 'XBTUSDT'
+    symbol_name: str = 'XBTUSDM'
     context: dict = None
     api_key: str = None
     api_secret: str = None
     api_passphrase: str = None
     user: dict = None
-    output: dict = None
+    output: dict = None  # data is fetched from KuCoins
     data: dict = None
 
     def __post_init__(self):
@@ -42,6 +46,7 @@ class Utility:
         if self.output:
             _user_id = self.context.get("user_id")
 
+            # the structure of cache key is `cache_key_{symbol_name}_{user_id}`
             self.redis_conn.set(f'cache_key_{self.symbol_name}_{_user_id}', json.dumps(self.output))
             self.redis_conn.expire(f'cache_key_{_user_id}', timedelta(seconds=settings.INTERVAL - 5))
 
@@ -50,7 +55,7 @@ class Utility:
             s = self.serializer(data=self.output, context=self.context)
             s.is_valid(raise_exception=True)
             s.save()
-
+            # Set cache
             self._set_cache()
             return s.data
         return None
@@ -63,7 +68,7 @@ class Utility:
 
     def get_positions(self) -> dict | None:
         # For position details
-        url = f'https://api-futures.kucoin.com/api/v1/position?symbol={self.symbol_name}'
+        url = f'{self.domain}/api/v1/position?symbol={self.symbol_name}'
 
         now = int(time.time() * 1000)
         # For position details
@@ -80,14 +85,12 @@ class Utility:
             "KC-API-PASSPHRASE": passphrase,
             "KC-API-KEY-VERSION": "2"
         }
-        response = requests.request('get', url, headers=headers)
-
-        res = response.json()
-        data = res.get('data')
+        response = requests.request('get', url, headers=headers).json()
+        data = response.get('data')
         if data:
             return self._internal_value(data=data)
         else:
-            print(res)
+            print(response)
             return None
 
 
@@ -97,14 +100,3 @@ def tracking_task(user, context):
     print("Tracking task---------> START")
     Utility(user=user, context=context, redis_conn=redis_conn)
     print("Tracking task---------> Done")
-
-# if __name__ == '__main__':
-# output = Utility(api_key="643ac410317fa70001647b44",
-#                  api_secret="ffe1e63c-1467-405b-99d4-6c59b491755c",
-#                  api_passphrase="9219474").output
-# output = Utility(api_key="643e5c90d3b4b7000149c88c",
-#                  api_secret="2e03da19-254e-4556-8055-553c62b4d44c",
-#                  api_passphrase="9219474").output
-# pprint.pprint(output)
-#
-#     # print({camel_to_underscore(k): v for k, v in data.items()})

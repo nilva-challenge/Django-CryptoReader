@@ -4,19 +4,20 @@ from .models import Position
 
 
 class PositionSerializer(serializers.ModelSerializer):
-    # user_id = serializers.IntegerField()
-    #
-    # class Meta:
-    #     model = Position
-    #     fields = '__all__'
-    #     # exclude = ('user',)
-    #     read_only_fields = ('symbol', 'created_at', 'mark_price', 'mark_value', 'rist_limit')
+    """
+    This serializer has been customized based partial received data from following api
+    https://api-futures.kucoin.com/api/v1/position?symbol={symbol_name}
+    """
     class Meta:
         model = Position
         fields = ('symbol', 'created_at', 'mark_price', 'mark_value', 'risk_limit')
 
-class TrackingPositionSerializer(serializers.ModelSerializer):
 
+class TrackingPositionSerializer(serializers.ModelSerializer):
+    """
+    this serializer is used to filter some additional information in all positions.
+    It has been applied in serializing_output method in Utility class.( it is located in tasks.py)
+    """
     class Meta:
         model = Position
         fields = ('symbol', 'created_at', 'mark_price', 'mark_value', 'risk_limit')

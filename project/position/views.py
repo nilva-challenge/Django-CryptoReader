@@ -13,10 +13,15 @@ import json
 
 
 class PositionTrackingView(APIView):
+    """
+    This view is used to track a symbol position in specific interval.[you must be authenticated]
+    these fields must be set in settings.py
+    EXPIRE_TIME, INTERVAL
+    """
     permission_classes = [IsAuthenticated]
 
     def post(self, request, symbol_name='XBTUSDM'):
-        # code to start position tracking for the authenticated user
+        # Start position tracking for the authenticated user
         user = request.user
         user_kucoin_secret_items = {'kucoin_api_key': user.kucoin_api_key,
                                     'kucoin_api_secret': user.kucoin_api_secret,
@@ -42,6 +47,10 @@ class PositionTrackingView(APIView):
 
 
 class LastOpenPositionsView(APIView):
+    """
+    this endpoint will return a just last tracked position based on the given symbol_name.
+    [you must be authenticated]
+    """
     permission_classes = [IsAuthenticated]
     serializer_class = PositionSerializer
 
@@ -74,6 +83,12 @@ class LastOpenPositionsView(APIView):
 
 class PositionsListView(mixins.ListModelMixin,
                         GenericViewSet):
+    """
+    This endpoint is used to list positions for a given symbol name otherwise
+    will return an all symbols list related to current user.[you must be authenticated]
+    query parameters: symbol_name (string) [this parameter is optional]
+
+    """
     permission_classes = [IsAuthenticated]
     serializer_class = PositionSerializer
     pagination_class = CustomPagination
@@ -85,7 +100,7 @@ class PositionsListView(mixins.ListModelMixin,
         return Response(serializer.data)
 
     def get_queryset(self):
-        target_symbol = self.kwargs.get('symbol')
+        target_symbol = self.kwargs.get('symbol_name')
         queryset = Position.objects.filter(user=self.request.user).order_by('created_at').all()
         if target_symbol:
             queryset = queryset.filter(symbol=target_symbol)

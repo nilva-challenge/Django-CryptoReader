@@ -6,6 +6,10 @@ from django_cryptography.fields import encrypt
 
 # provide name, username & kucoin details
 class User(AbstractUser):
+    """
+    Custom User model
+    all KuCoins details have been encrypted and stored in the database.
+    """
     kucoin_api_key = encrypt(models.CharField(max_length=255, null=True, blank=True))
     kucoin_api_secret = encrypt(models.CharField(max_length=255, null=True, blank=True))
     kucoin_passphrase = encrypt(models.CharField(max_length=255, blank=True, null=True))
