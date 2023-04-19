@@ -152,7 +152,7 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('JWT',),
 
 }
-
+#### AUTH #####################################
 DJOSER = {
     'SERIALIZERS': {
         'user_create': 'core.serializers.UserCreateSerializer',
@@ -182,5 +182,9 @@ CACHES = {
     }
 }
 
+##### SCHEDULER CONFIG #################################
+from datetime import datetime, timedelta
 
-# REDIS_CACHE_URL = 'redis://127.0.0.1:6379/1'
+EXPIRE_TIME = datetime.utcnow() + timedelta(days=100)
+TARGET_SCHEDULE_APP_NAME = 'position'
+INTERVAL = 30

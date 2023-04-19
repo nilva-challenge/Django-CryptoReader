@@ -10,8 +10,9 @@ import pprint
 from .serializers import TrackingPositionSerializer
 from celery import shared_task
 from datetime import timedelta
-
+from django.conf import settings
 from django_redis import get_redis_connection
+
 
 @dataclass
 class Utility:
@@ -40,8 +41,9 @@ class Utility:
     def _set_cache(self) -> None:
         if self.output:
             _user_id = self.context.get("user_id")
-            self.redis_conn.set(f'cache_key_{_user_id}', json.dumps(self.output))
-            self.redis_conn.expire(f'cache_key_{_user_id}', timedelta(seconds=25))
+
+            self.redis_conn.set(f'cache_key_{self.symbol_name}_{_user_id}', json.dumps(self.output))
+            self.redis_conn.expire(f'cache_key_{_user_id}', timedelta(seconds=settings.INTERVAL - 5))
 
     def serializing_output(self):
         if self.output is not None:
@@ -62,15 +64,10 @@ class Utility:
     def get_positions(self) -> dict | None:
         # For position details
         url = f'https://api-futures.kucoin.com/api/v1/position?symbol={self.symbol_name}'
-        # For positions (list of positions)
-        # url = f'https://api-futures.kucoin.com/api/v1/positions'
 
         now = int(time.time() * 1000)
         # For position details
         str_to_sign = str(now) + 'GET' + f'/api/v1/position?symbol={self.symbol_name}'
-
-        # For positions (list of positions)
-        # str_to_sign = str(now) + 'GET' + f'/api/v1/positions'
 
         signature = base64.b64encode(
             hmac.new(self.api_secret.encode('utf-8'), str_to_sign.encode('utf-8'), hashlib.sha256).digest())
@@ -92,6 +89,7 @@ class Utility:
         else:
             print(res)
             return None
+
 
 @shared_task
 def tracking_task(user, context):

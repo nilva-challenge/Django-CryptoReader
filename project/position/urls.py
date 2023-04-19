@@ -1,8 +1,12 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
+from rest_framework import routers
+
+router = routers.DefaultRouter()
+router.register('positions', views.PositionsListView, basename='positions')
 
 urlpatterns = [
     path('position_tracking/', views.PositionTrackingView.as_view(), name='position_tracking'),
-    path('position/', views.OpenPositionsView.as_view(), name='open_positions'),
-
+    path('position/<str:symbol_name>/', views.LastOpenPositionsView.as_view(), name='open_positions'),
+    path('', include(router.urls)),
 ]
