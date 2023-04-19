@@ -23,6 +23,7 @@ django-celery-beat==2.5.0
 django-cryptography==1.1
 django-debug-toolbar==4.0.0
 django-redis==5.2.0
+django-rest-swagger==2.2.0
 django-templated-mail==1.1.1
 django-timezone-field==5.0
 djangorestframework==3.14.0
@@ -31,6 +32,7 @@ djoser==2.1.0
 gevent==22.10.2
 greenlet==2.0.2
 idna==3.4
+inflection==0.5.1
 itypes==1.2.0
 Jinja2==3.1.2
 kombu==5.2.4
@@ -38,6 +40,8 @@ MarkupSafe==2.1.2
 mysqlclient==2.1.1
 numpy==1.24.2
 oauthlib==3.2.2
+openapi-codec==1.3.2
+packaging==23.1
 prompt-toolkit==3.0.38
 pycparser==2.21
 PyJWT==2.6.0
@@ -47,10 +51,13 @@ python-kucoin==0.1.12
 python3-openid==3.2.0
 pytz==2023.3
 pytz-deprecation-shim==0.1.0.post0
+PyYAML==6.0
 redis==3.5.3
 regex==2023.3.23
 requests==2.28.2
 requests-oauthlib==1.3.1
+ruamel.yaml==0.17.21
+simplejson==3.19.1
 six==1.16.0
 social-auth-app-django==4.0.0
 social-auth-core==4.4.1
