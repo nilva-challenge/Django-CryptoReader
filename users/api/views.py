@@ -13,11 +13,12 @@ class UserCreateView(viewsets.GenericViewSet, mixins.CreateModelMixin):
 
 class UserGetView(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
     serializer_class = UserSerializer
-    authentication_classes = []
-    # permission_classes = [permissions.IsAuthenticated,]
+    permission_classes = [permissions.IsAuthenticated,]
 
     def get_queryset(self):
+        print(self.request.user.id)
+        print()
         if self.request.user.is_staff:
             return User.objects.all()
         else:
-            return User.objects.get(pk=self.request.user.id)
+            return User.objects.filter(pk=self.request.user.id)
