@@ -1,3 +1,4 @@
+from typing import Optional
 from django.conf import settings
 from cryptography.fernet import Fernet
 import base64
@@ -7,9 +8,11 @@ import traceback
 # get the key from settings
 f = Fernet(settings.ENCRYPTION_KEY)
 
-def encrypt(raw_txt):
+def encrypt(raw_txt:str) -> Optional[str]:
     """
         Function to encrypt raw text using Fernet class
+        params:
+            - raw_txt : raw string to be ecrypted
     """
     try:
         # convert integer etc to string first
@@ -25,9 +28,11 @@ def encrypt(raw_txt):
         return None
 
 
-def decrypt(encrypted_txt):
+def decrypt(encrypted_txt:str) -> Optional[str]:
     """
         Function to decrypt encrypted text using Fernet class
+        params:
+            - encrypted_txt : ecrypted text to be decrypted
     """
     try:
         # base64 decode

@@ -1,4 +1,4 @@
-from rest_framework import generics, mixins, views, viewsets, permissions
+from rest_framework import mixins, viewsets, permissions
 from django.contrib.auth import get_user_model
 
 from .serializers import UserSerializer
@@ -16,8 +16,6 @@ class UserGetView(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
     permission_classes = [permissions.IsAuthenticated,]
 
     def get_queryset(self):
-        print(self.request.user.id)
-        print()
         if self.request.user.is_staff:
             return User.objects.all()
         else:

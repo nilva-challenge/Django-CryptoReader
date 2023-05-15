@@ -26,7 +26,7 @@ class UserSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         """
-            Hash password and encrypt api detail for safety.
+            Hash password and encrypt api details for safety.
         """
         validated_data['password'] = make_password(validated_data['password'])
         validated_data['api_key'] = encrypt(validated_data['api_key'])

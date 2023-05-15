@@ -4,3 +4,4 @@ kucoin-python
 djangorestframework-simplejwt
 django-filter
 cryptography
+celery==4.4.2

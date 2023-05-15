@@ -184,3 +184,20 @@ SIMPLE_JWT = {
     # "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
 
+# Celery configs
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_ENABLE_UTC = True
+CELERY_IMPORTS = [
+    'readers.tasks',
+]
+
+# Celery settings
+CELERY_BEAT_SCHEDULE = {
+    'every-30-sec': {
+        'task': 'readers.tasks.cach_positions_all_users',
+        'schedule': 30.0
+    }
+}
