@@ -12,5 +12,8 @@ class Account(models.Model):
     available = models.DecimalField(max_digits=20, decimal_places=6)
     holds = models.DecimalField(max_digits=20, decimal_places=6)
 
+    class Meta:
+        unique_together = ('user', 'account_id',)
+
     def __str__(self) -> str:
         return f'{self.account_id} - user:{self.user.id}'
