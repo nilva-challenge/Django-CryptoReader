@@ -201,3 +201,6 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': 30.0
     }
 }
+
+# Thread pool number for celery worker threads
+THREAD_POOL = 4
