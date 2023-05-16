@@ -197,7 +197,7 @@ CELERY_IMPORTS = [
 # Celery settings
 CELERY_BEAT_SCHEDULE = {
     'every-30-sec': {
-        'task': 'readers.tasks.cach_positions_all_users',
+        'task': 'readers.tasks.cache_positions_all_users',
         'schedule': 30.0
     }
 }

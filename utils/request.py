@@ -15,4 +15,6 @@ def get_account_for_user(user:User) -> list:
     # Request for accounts using Kucoin SDK
     account_list = client.get_account_list()
     # Transaction success
-    return account_list['data']
+    if isinstance(account_list, list):
+        return account_list
+    return []

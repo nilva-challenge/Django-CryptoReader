@@ -10,7 +10,7 @@ logger = get_task_logger(__name__)
 User = get_user_model()
 
 @shared_task
-def cach_positions_all_users():
+def cache_positions_all_users():
     users = User.objects.all()
     pool = ThreadPool(settings.THREAD_POOL)
     params = list(users)

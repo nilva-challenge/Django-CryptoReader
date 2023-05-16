@@ -14,7 +14,8 @@ class AccountViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
             qs = request.user.accounts.all()
             serializer = self.get_serializer(qs, many=True)
             return Response(serializer.data)
-        if accounts:
-            serializer = self.get_serializer(accounts)
-            return Response(serializer.data)
-        return Response({})
+        qs = []
+        for account in accounts:
+            qs.append(Account(**account)) 
+        serializer = self.get_serializer(qs, many=True)
+        return Response(serializer.data)
