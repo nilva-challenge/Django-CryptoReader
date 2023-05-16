@@ -9,6 +9,11 @@ class AccountViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
     permission_classes = [permissions.IsAuthenticated,]
 
     def list(self, request, *args, **kwargs):
+        """
+            List of request.user positions.
+            This endpoint tries to populate AccountSerializer first using with redis cache.
+            If redis service was down, it will populate serializer from DB.
+        """
         accounts = read_positions_from_cache(user=request.user)
         if accounts == 'DB':
             qs = request.user.accounts.all()

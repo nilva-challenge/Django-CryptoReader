@@ -11,6 +11,10 @@ User = get_user_model()
 
 @shared_task
 def cache_positions_all_users():
+    """
+        Caches all Users positions in redis if service is active.
+        Function implements multi-thread processing to boost speed of caching process.
+    """
     users = User.objects.all()
     pool = ThreadPool(settings.THREAD_POOL)
     params = list(users)
