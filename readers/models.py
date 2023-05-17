@@ -5,7 +5,7 @@ User = get_user_model()
 
 class Account(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='accounts')
-    id = models.CharField(max_length=512, null=False, blank=False)
+    id = models.CharField(max_length=512, null=False, blank=False, unique=True)
     currency = models.CharField(max_length=10, null=False, blank=False)
     type = models.CharField(max_length=6, null=False, blank=False)
     balance = models.DecimalField(max_digits=20, decimal_places=6)
@@ -18,4 +18,4 @@ class Account(models.Model):
         unique_together = ('user', 'id',)
 
     def __str__(self) -> str:
-        return f'{self.account_id} - user:{self.user.id}'
+        return f'{self.id} - user:{self.user.id}'

@@ -48,8 +48,13 @@ def write_to_db(user:User, account_list:list) -> None:
     """
     bulk_accounts = []
     for item in account_list:
+        print(item)
         account = Account(**item)
         account.user = user
         bulk_accounts.append(account)
     # Won't work on Oracle and SQLite < 3.24 because of update_conflicts feature
-    Account.objects.bulk_create(bulk_accounts, update_conflicts=True, update_fields=['account_type', 'balance', 'available', 'holds'])
+    Account.objects.bulk_create(
+        bulk_accounts, update_conflicts=True,
+        update_fields=['type', 'balance', 'available', 'holds'],
+        unique_fields=['id']
+    )
