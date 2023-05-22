@@ -1,0 +1,55 @@
+from django.db import models
+from django.contrib.auth.models import AbstractUser
+
+
+class UserForkucoin(AbstractUser):
+   api_name = models.CharField(max_length=40)
+   api_key = models.CharField(max_length=40)
+   api_secret = models.CharField(max_length=50)
+   api_email = models.EmailField()
+   activePositionTracking=models.BooleanField()
+
+class Position(models.Model):
+    owner=models.ForeignKey(UserForkucoin, on_delete=models.CASCADE)
+    id = models.CharField(max_length=50, primary_key=True)
+    symbol = models.CharField(max_length=50)
+    autoDeposit = models.BooleanField()
+    maintMarginReq = models.FloatField()
+    riskLimit = models.IntegerField()
+    realLeverage = models.FloatField()
+    crossMode = models.BooleanField()
+    delevPercentage = models.FloatField()
+    openingTimestamp = models.BigIntegerField()
+    currentTimestamp = models.BigIntegerField()
+    currentQty = models.IntegerField()
+    currentCost = models.FloatField()
+    currentComm = models.FloatField()
+    unrealisedCost = models.FloatField()
+    realisedGrossCost = models.FloatField()
+    realisedCost = models.FloatField()
+    isOpen = models.BooleanField()
+    markPrice = models.FloatField()
+    markValue = models.FloatField()
+    posCost = models.FloatField()
+    posCross = models.FloatField()
+    posInit = models.FloatField()
+    posComm = models.FloatField()
+    posLoss = models.FloatField()
+    posMargin = models.FloatField()
+    posMaint = models.FloatField()
+    maintMargin = models.FloatField()
+    realisedGrossPnl = models.FloatField()
+    realisedPnl = models.FloatField()
+    unrealisedPnl = models.FloatField()
+    unrealisedPnlPcnt = models.FloatField()
+    unrealisedRoePcnt = models.FloatField()
+    avgEntryPrice = models.FloatField()
+    liquidationPrice = models.FloatField()
+    bankruptPrice = models.FloatField()
+    settleCurrency = models.CharField(max_length=10)
+    isInverse = models.BooleanField()
+    userId = models.IntegerField()
+    maintainMargin = models.FloatField()
+
+    def __str__(self):
+        return self.symbol
