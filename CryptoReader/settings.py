@@ -13,6 +13,7 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
+import redis
 from decouple import config, Csv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -27,6 +28,13 @@ SECRET_KEY = config('SECRET_KEY', 'DUMMY_KEY')
 DEBUG = config('DEBUG', cast=bool, default=False)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv(), default='*')
+
+REDIS_HOST = config('REDIS_HOST', default='localhost')
+REDIS_PORT = config('REDIS_PORT', default=6379)
+REDIS_INSTANCE = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
+
+POSITION_EXPIRE = 1 * 2 * 60
+
 KUCOIN_API = 'https://api.kucoin.com'
 
 ENCRYPTION_KEY = config('ENCRYPTION_KEY')

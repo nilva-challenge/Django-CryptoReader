@@ -3,6 +3,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from .functions import cache_position
 from .models import Order
 from .serializers import OrderSerializers, SymbolTrackSerializers
 
@@ -19,7 +20,7 @@ class OpenPositionsAPIView(GenericAPIView):
     pagination_class = PositionPagination
 
     def get(self, request):
-        orders = Order.objects.filter(user=request.user, is_active=True)
+        orders = cache_position(request.user)
         data = OrderSerializers(orders, many=True).data
 
         paginator = PositionPagination()
