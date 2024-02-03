@@ -43,10 +43,8 @@ def kucoin_orders_api_view(request) -> Response:
     key = f'{user.username}_{status}_orders'
     del filter_params['status']
     if key in cache:
-        print('inja')
         orders = cache.get(key)
     else:
-        print('anja')
         try:
             kucoin_obj = Kucoin(method='GET',endpoint='/api/v1/orders',sandbox=True,params={'status':status},user=user)
             resp = kucoin_obj.dispatcher()
